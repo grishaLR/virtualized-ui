@@ -1,0 +1,66 @@
+{
+  "name": "virtualized-ui-monorepo",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Headless virtualized table and select components for React",
+  "scripts": {
+    "dev": "storybook dev -p 6006",
+    "build": "pnpm --filter virtualized-ui build",
+    "build:docs": "pnpm --filter docs build",
+    "build-storybook": "storybook build",
+    "lint": "eslint packages/",
+    "format": "prettier --write \"packages/**/*.{ts,tsx}\" \".storybook/**/*.{ts,tsx}\" \"*.{json,js}\"",
+    "typecheck": "tsc --noEmit",
+    "test": "pnpm --filter virtualized-ui test",
+    "test:watch": "pnpm --filter virtualized-ui test:watch",
+    "prepare": "husky"
+  },
+  "keywords": [
+    "react",
+    "virtual",
+    "table",
+    "select",
+    "headless",
+    "tanstack"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/grishalr/virtualized-ui.git"
+  },
+  "packageManager": "pnpm@9.15.0",
+  "engines": {
+    "node": ">=20"
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": [
+      "prettier --write",
+      "eslint --fix"
+    ],
+    "*.{json,yaml,yml}": [
+      "prettier --write"
+    ]
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^20.4.0",
+    "@commitlint/config-conventional": "^20.4.0",
+    "@eslint/js": "^9.39.2",
+    "@storybook/addon-essentials": "^8.4.0",
+    "@storybook/addon-interactions": "^8.4.0",
+    "@storybook/addon-links": "^8.4.0",
+    "@storybook/blocks": "^8.4.0",
+    "@storybook/react": "^8.4.0",
+    "@storybook/react-vite": "^8.4.0",
+    "@types/react": "^18.3.0",
+    "@types/react-dom": "^18.3.0",
+    "eslint": "^9.0.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.7",
+    "prettier": "^3.8.1",
+    "react": "^18.3.0",
+    "react-dom": "^18.3.0",
+    "storybook": "^8.4.0",
+    "typescript": "^5.6.0",
+    "typescript-eslint": "^8.54.0"
+  }
+}
