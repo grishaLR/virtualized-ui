@@ -1,0 +1,43 @@
+---
+import '../styles/global.css'
+import Sidebar from '../components/Sidebar.astro'
+
+interface Props {
+  title: string
+}
+
+const { title } = Astro.props
+---
+
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="description" content="Headless virtualized table and select components for React" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>{title} | virtualized-ui</title>
+  </head>
+  <body class="min-h-screen bg-base-100">
+    <div class="drawer lg:drawer-open">
+      <input id="drawer" type="checkbox" class="drawer-toggle" />
+      <div class="drawer-content">
+        <div class="navbar bg-base-100 border-b border-base-200 lg:hidden">
+          <button onclick="document.getElementById('drawer').click()" class="btn btn-ghost btn-square" aria-label="Open menu">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+          <span class="font-bold">virtualized-ui</span>
+        </div>
+        <main class="p-4 lg:p-10 w-full">
+          <slot />
+        </main>
+      </div>
+      <div class="drawer-side z-40">
+        <label for="drawer" class="drawer-overlay"><span class="sr-only">Close menu</span></label>
+        <Sidebar />
+      </div>
+    </div>
+  </body>
+</html>

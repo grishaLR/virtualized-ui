@@ -1,0 +1,117 @@
+---
+layout: ../layouts/DocsLayout.astro
+title: Getting Started
+---
+
+# Getting Started
+
+## Installation
+
+```bash
+npm install virtualized-ui
+```
+
+Or with other package managers:
+
+```bash
+pnpm add virtualized-ui
+yarn add virtualized-ui
+```
+
+## Peer Dependencies
+
+virtualized-ui requires React 18+:
+
+```bash
+npm install react react-dom
+```
+
+## Basic Usage
+
+The library exports a `useVirtualTable` hook that combines TanStack Table with TanStack Virtual.
+
+```tsx
+import { useVirtualTable } from 'virtualized-ui';
+import { flexRender, createColumnHelper } from '@tanstack/react-table';
+
+interface Person {
+  id: number;
+  name: string;
+  email: string;
+}
+
+const columnHelper = createColumnHelper<Person>();
+
+const columns = [
+  columnHelper.accessor('id', { header: 'ID' }),
+  columnHelper.accessor('name', { header: 'Name' }),
+  columnHelper.accessor('email', { header: 'Email' }),
+];
+
+function MyTable({ data }: { data: Person[] }) {
+  const {
+    table,
+    rows,
+    virtualItems,
+    totalSize,
+    containerRef,
+  } = useVirtualTable({
+    data,
+    columns,
+  });
+
+  return (
+    <div ref={containerRef} style={{ height: 400, overflow: 'auto' }}>
+      {/* Header */}
+      <div style={{ position: 'sticky', top: 0, background: '#f5f5f5' }}>
+        {table.getHeaderGroups().map((headerGroup) => (
+          <div key={headerGroup.id} style={{ display: 'flex' }}>
+            {headerGroup.headers.map((header) => (
+              <div key={header.id} style={{ width: header.getSize() }}>
+                {flexRender(header.column.columnDef.header, header.getContext())}
+              </div>
+            ))}
+          </div>
+        ))}
+      </div>
+
+      {/* Virtualized Body */}
+      <div style={{ height: totalSize, position: 'relative' }}>
+        {virtualItems.map((virtualRow) => {
+          const row = rows[virtualRow.index];
+          return (
+            <div
+              key={row.id}
+              style={{
+                position: 'absolute',
+                top: virtualRow.start,
+                display: 'flex',
+              }}
+            >
+              {row.getVisibleCells().map((cell) => (
+                <div key={cell.id} style={{ width: cell.column.getSize() }}>
+                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                </div>
+              ))}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+```
+
+## Headless Design
+
+virtualized-ui is headless—it manages state and virtualization, not styling. You bring your own CSS, Tailwind, or UI library.
+
+This gives you full control over the look and feel while the library handles:
+
+- **Virtualization** — Only renders visible rows
+- **State management** — Sorting, selection, expansion
+- **Keyboard navigation** — Arrow keys, Home/End, Space/Enter
+
+## Next Steps
+
+- [VirtualTable API](/components/table) — Full options and examples

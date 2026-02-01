@@ -1,0 +1,65 @@
+---
+import DocsLayout from '../layouts/DocsLayout.astro'
+import { TableDemo } from '../components/TableDemo'
+---
+
+<DocsLayout title="Home">
+  <div class="prose">
+    <h1>virtualized-ui</h1>
+    <p class="text-xl text-base-content/70 !mt-2">
+      Headless virtualized components for React.
+    </p>
+
+    <div class="my-10 p-6 bg-base-200 rounded-xl not-prose">
+      <p class="text-sm text-base-content/60 mb-4">1,000 rows rendered instantly</p>
+      <TableDemo client:load rowCount={1000} enableSorting />
+    </div>
+
+    <p>
+      Primitives for tables and selects that handle the hard parts—virtualization,
+      keyboard navigation, state management—while staying out of your way on the UI.
+    </p>
+
+    <h2>Features</h2>
+
+    <div class="grid md:grid-cols-2 gap-4 not-prose my-6">
+      <div class="card bg-base-200">
+        <div class="card-body">
+          <h3 class="card-title text-lg">VirtualTable</h3>
+          <ul class="text-sm space-y-1 text-base-content/80">
+            <li>Virtualized rows (10k+ no problem)</li>
+            <li>Sorting (single & multi-column)</li>
+            <li>Row selection & expansion</li>
+            <li>Column resizing & reordering</li>
+            <li>Keyboard navigation</li>
+            <li>Infinite scroll</li>
+          </ul>
+        </div>
+      </div>
+      <div class="card bg-base-200">
+        <div class="card-body">
+          <h3 class="card-title text-lg">
+            VirtualSelect
+            <span class="badge badge-sm badge-ghost">coming soon</span>
+          </h3>
+          <ul class="text-sm space-y-1 text-base-content/50">
+            <li>Virtualized options</li>
+            <li>Async search with debounce</li>
+            <li>Grouping & creatable</li>
+            <li>Custom option renderer</li>
+            <li>Keyboard navigation</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <h2>Install</h2>
+
+    <pre><code>npm install virtualized-ui</code></pre>
+
+    <p>
+      <a href="/getting-started" class="btn bg-blue-600 hover:bg-blue-700 border-none" style="color: white;">Get Started</a>
+      <a href="/components/table" class="btn btn-ghost ml-2">View Table Docs</a>
+    </p>
+  </div>
+</DocsLayout>
