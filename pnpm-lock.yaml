@@ -90,8 +90,8 @@ importers:
         specifier: ^18.3.0
         version: 18.3.1(react@18.3.1)
       virtualized-ui:
-        specifier: workspace:*
-        version: link:../packages/core
+        specifier: ^0.1.1
+        version: 0.1.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
     devDependencies:
       '@tanstack/react-table':
         specifier: ^8.20.0
@@ -3869,6 +3869,12 @@ packages:
 
   vfile@6.0.3:
     resolution: {integrity: sha512-KzIbH/9tXat2u30jf+smMwFCsno4wHVdNmzFyL+T/L3UGqqk6JKfVqOFOZEpZSHADH1k40ab6NUIXZq422ov3Q==}
+
+  virtualized-ui@0.1.1:
+    resolution: {integrity: sha512-aTr96lXdNEGKoEEbQrqviZ1Gkf0CEUVmw1acvFLlONEusDjcJffUcFuOorRI9DYi6umKwoux+ysa4kGaJebTCg==}
+    peerDependencies:
+      react: '>=18.0.0'
+      react-dom: '>=18.0.0'
 
   vite@6.4.1:
     resolution: {integrity: sha512-+Oxm7q9hDoLMyJOYfUYBuHQo+dkAloi33apOPP56pzj+vsdJDzr+j1NISE5pyaAuKL4A3UD34qd0lx5+kfKp2g==}
@@ -8399,6 +8405,13 @@ snapshots:
     dependencies:
       '@types/unist': 3.0.3
       vfile-message: 4.0.3
+
+  virtualized-ui@0.1.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+    dependencies:
+      '@tanstack/react-table': 8.21.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@tanstack/react-virtual': 3.13.18(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
 
   vite@6.4.1(@types/node@25.2.0)(jiti@1.21.7)(yaml@2.8.2):
     dependencies:
