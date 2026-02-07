@@ -80,19 +80,6 @@ importers:
       '@astrojs/tailwind':
         specifier: ^6.0.0
         version: 6.0.2(astro@5.17.1(@types/node@25.2.0)(jiti@1.21.7)(rollup@4.57.1)(typescript@5.9.3)(yaml@2.8.2))(tailwindcss@3.4.19(yaml@2.8.2))
-      astro:
-        specifier: ^5.0.0
-        version: 5.17.1(@types/node@25.2.0)(jiti@1.21.7)(rollup@4.57.1)(typescript@5.9.3)(yaml@2.8.2)
-      react:
-        specifier: ^18.3.0
-        version: 18.3.1
-      react-dom:
-        specifier: ^18.3.0
-        version: 18.3.1(react@18.3.1)
-      virtualized-ui:
-        specifier: ^0.1.1
-        version: 0.1.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-    devDependencies:
       '@tanstack/react-table':
         specifier: ^8.20.0
         version: 8.21.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -102,6 +89,9 @@ importers:
       '@types/react-dom':
         specifier: ^18.3.0
         version: 18.3.7(@types/react@18.3.27)
+      astro:
+        specifier: ^5.0.0
+        version: 5.17.1(@types/node@25.2.0)(jiti@1.21.7)(rollup@4.57.1)(typescript@5.9.3)(yaml@2.8.2)
       autoprefixer:
         specifier: ^10.4.0
         version: 10.4.24(postcss@8.5.6)
@@ -111,9 +101,18 @@ importers:
       postcss:
         specifier: ^8.4.0
         version: 8.5.6
+      react:
+        specifier: ^18.3.0
+        version: 18.3.1
+      react-dom:
+        specifier: ^18.3.0
+        version: 18.3.1(react@18.3.1)
       tailwindcss:
         specifier: ^3.4.0
         version: 3.4.19(yaml@2.8.2)
+      virtualized-ui:
+        specifier: ^0.3.1
+        version: 0.3.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
 
   packages/core:
     dependencies:
@@ -3870,8 +3869,8 @@ packages:
   vfile@6.0.3:
     resolution: {integrity: sha512-KzIbH/9tXat2u30jf+smMwFCsno4wHVdNmzFyL+T/L3UGqqk6JKfVqOFOZEpZSHADH1k40ab6NUIXZq422ov3Q==}
 
-  virtualized-ui@0.1.1:
-    resolution: {integrity: sha512-aTr96lXdNEGKoEEbQrqviZ1Gkf0CEUVmw1acvFLlONEusDjcJffUcFuOorRI9DYi6umKwoux+ysa4kGaJebTCg==}
+  virtualized-ui@0.3.1:
+    resolution: {integrity: sha512-vqoH72orJoHcKIv0rIgfMZrtYzxNIzvqUw86ODdfieHFovIp8W57ClQlTYXBVK49dpZXmif8Nnu3YkUeHVyuvg==}
     peerDependencies:
       react: '>=18.0.0'
       react-dom: '>=18.0.0'
@@ -8406,7 +8405,7 @@ snapshots:
       '@types/unist': 3.0.3
       vfile-message: 4.0.3
 
-  virtualized-ui@0.1.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+  virtualized-ui@0.3.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
       '@tanstack/react-table': 8.21.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@tanstack/react-virtual': 3.13.18(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
