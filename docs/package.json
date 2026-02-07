@@ -10,18 +10,16 @@
     "@astrojs/mdx": "^4.0.0",
     "@astrojs/react": "^4.0.0",
     "@astrojs/tailwind": "^6.0.0",
-    "astro": "^5.0.0",
-    "react": "^18.3.0",
-    "react-dom": "^18.3.0",
-    "virtualized-ui": "^0.2.0"
-  },
-  "devDependencies": {
     "@tanstack/react-table": "^8.20.0",
     "@types/react": "^18.3.0",
     "@types/react-dom": "^18.3.0",
+    "astro": "^5.0.0",
     "autoprefixer": "^10.4.0",
     "daisyui": "^4.12.0",
     "postcss": "^8.4.0",
-    "tailwindcss": "^3.4.0"
+    "react": "^18.3.0",
+    "react-dom": "^18.3.0",
+    "tailwindcss": "^3.4.0",
+    "virtualized-ui": "^0.2.0"
   }
 }
