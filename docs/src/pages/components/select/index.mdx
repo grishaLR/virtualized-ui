@@ -1,0 +1,167 @@
+---
+layout: ../../../layouts/DocsLayout.astro
+title: VirtualSelect
+---
+
+import { SelectBasicDemo } from '../../../components/select/SelectBasicDemo';
+
+# VirtualSelect
+
+<p className="text-lg text-base-content/70 !mt-2 mb-4">
+  A headless virtualized select component with search, multi-select, grouped options, and async loading.
+  Built on TanStack Virtual.
+</p>
+
+## Basic Usage
+
+<div className="grid grid-cols-1 lg:grid-cols-5 gap-8 my-6 not-prose">
+  <div className="lg:col-span-3">
+    <SelectBasicDemo client:load />
+  </div>
+  <div className="lg:col-span-2 text-sm">
+    <p className="mb-3 text-base-content/70">Use the <code>useVirtualSelect</code> hook for full control:</p>
+```tsx
+import { useVirtualSelect } from 'virtualized-ui';
+
+const select = useVirtualSelect({
+  options: countries,
+  getOptionValue: (c) => c.code,
+  getOptionLabel: (c) => c.name,
+  searchable: true,
+  placeholder: 'Choose a country...',
+});
+```
+
+    <p className="mt-4 mb-3 text-base-content/70">Or use the <code>VirtualSelect</code> component:</p>
+```tsx
+import { VirtualSelect } from 'virtualized-ui';
+
+<VirtualSelect
+  options={countries}
+  getOptionValue={(c) => c.code}
+  getOptionLabel={(c) => c.name}
+  searchable
+  placeholder="Choose a country..."
+/>
+```
+
+    <div className="mt-4 overflow-x-auto">
+      <table className="table-compact">
+        <thead><tr><th>Option</th><th>Type</th><th>Default</th></tr></thead>
+        <tbody>
+          <tr><td><code>options</code></td><td><code>T[] | OptionGroup&lt;T&gt;[]</code></td><td>—</td></tr>
+          <tr><td><code>getOptionValue</code></td><td><code>(o) =&gt; string</code></td><td>required</td></tr>
+          <tr><td><code>getOptionLabel</code></td><td><code>(o) =&gt; string</code></td><td>required</td></tr>
+          <tr><td><code>placeholder</code></td><td><code>string</code></td><td>—</td></tr>
+          <tr><td><code>disabled</code></td><td><code>boolean</code></td><td>false</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+## Features
+
+Explore each feature on its own page:
+
+<div className="grid md:grid-cols-2 gap-3 my-6 not-prose">
+  <a href="/components/select/searchable" className="card bg-base-200 hover:bg-base-300 transition-colors">
+    <div className="card-body py-4 px-5">
+      <h3 className="font-semibold">Searchable</h3>
+      <p className="text-sm text-base-content/60">Type-to-filter with custom filter functions</p>
+    </div>
+  </a>
+  <a href="/components/select/multi-select" className="card bg-base-200 hover:bg-base-300 transition-colors">
+    <div className="card-body py-4 px-5">
+      <h3 className="font-semibold">Multi-Select</h3>
+      <p className="text-sm text-base-content/60">Select multiple values with tags</p>
+    </div>
+  </a>
+  <a href="/components/select/grouped" className="card bg-base-200 hover:bg-base-300 transition-colors">
+    <div className="card-body py-4 px-5">
+      <h3 className="font-semibold">Grouped Options</h3>
+      <p className="text-sm text-base-content/60">Categorize options with styled group headers</p>
+    </div>
+  </a>
+  <a href="/components/select/async" className="card bg-base-200 hover:bg-base-300 transition-colors">
+    <div className="card-body py-4 px-5">
+      <h3 className="font-semibold">Async Loading</h3>
+      <p className="text-sm text-base-content/60">Debounced search with caching and loading states</p>
+    </div>
+  </a>
+  <a href="/components/select/submenu" className="card bg-base-200 hover:bg-base-300 transition-colors">
+    <div className="card-body py-4 px-5">
+      <h3 className="font-semibold">Sub-Menus</h3>
+      <p className="text-sm text-base-content/60">Cascade into nested option hierarchies</p>
+    </div>
+  </a>
+</div>
+
+## Return Values (Hook)
+
+```tsx
+const {
+  // Virtualizer
+  virtualizer,      // TanStack Virtual instance
+  virtualItems,     // Currently visible virtual items
+  totalSize,        // Total scrollable height (px)
+  menuRef,          // Ref for menu scroll container
+  measureElement,   // Ref callback for dynamic sizing
+
+  // State
+  isOpen,           // Whether dropdown is open
+  searchValue,      // Current search text
+  focusedIndex,     // Currently focused option index
+  selectedValues,   // Array of selected value strings
+  selectedOptions,  // Array of selected option objects
+  isLoading,        // Whether async options are loading
+  flattenedItems,   // Flattened items (options + group headers)
+
+  // Actions
+  open, close, toggle,
+  setSearch, selectValue, deselectValue, toggleValue, clearAll,
+  setFocusedIndex, openSubMenu, closeSubMenus,
+
+  // Event handlers
+  handleKeyDown,    // For the container/trigger
+  handleMenuKeyDown,// For the menu list
+  handleSearchInput,// For the search input
+
+  // Refs
+  containerRef, triggerRef, inputRef,
+
+  // ARIA helpers
+  getTriggerProps, getMenuProps, getOptionProps, getInputProps,
+} = useVirtualSelect(options);
+```
+
+## Controlled vs Uncontrolled
+
+<div className="grid grid-cols-1 lg:grid-cols-2 gap-6 my-6 not-prose text-sm">
+  <div>
+    <p className="font-medium mb-2">Uncontrolled</p>
+    <p className="text-base-content/70 mb-3">State managed internally:</p>
+```tsx
+const { selectedValues } = useVirtualSelect({
+  options: items,
+  getOptionValue: (o) => o.id,
+  getOptionLabel: (o) => o.name,
+});
+// `selectedValues` reflects internal state
+```
+  </div>
+  <div>
+    <p className="font-medium mb-2">Controlled</p>
+    <p className="text-base-content/70 mb-3">You own the state:</p>
+```tsx
+const [value, setValue] = useState<string[]>([]);
+useVirtualSelect({
+  options: items,
+  getOptionValue: (o) => o.id,
+  getOptionLabel: (o) => o.name,
+  value,
+  onValueChange: setValue,
+});
+```
+  </div>
+</div>

@@ -1,0 +1,62 @@
+---
+layout: ../../../layouts/DocsLayout.astro
+title: "VirtualSelect: Multi-Select"
+---
+
+import { SelectMultiDemo } from '../../../components/select/SelectMultiDemo';
+
+# Multi-Select
+
+<p className="text-lg text-base-content/70 !mt-2 mb-4">
+  Select multiple values with tag-style display and individual remove buttons.
+</p>
+
+## Multiple Values
+
+<div className="grid grid-cols-1 lg:grid-cols-5 gap-8 my-6 not-prose">
+  <div className="lg:col-span-3">
+    <SelectMultiDemo client:load />
+  </div>
+  <div className="lg:col-span-2 text-sm">
+    <p className="mb-3 text-base-content/70">Enable multi-select mode:</p>
+```tsx
+const select = useVirtualSelect({
+  options: skills,
+  getOptionValue: (s) => s.id,
+  getOptionLabel: (s) => s.name,
+  multiple: true,
+  closeOnSelect: false,
+});
+
+// Selected values
+select.selectedValues;  // ['react', 'typescript']
+select.selectedOptions; // [{ id: 'react', ... }, ...]
+
+// Actions
+select.toggleValue('react');
+select.deselectValue('react');
+select.clearAll();
+```
+
+    <p className="mt-4 mb-3 text-base-content/70">Controlled multi-select:</p>
+```tsx
+const [values, setValues] = useState<string[]>([]);
+
+useVirtualSelect({
+  multiple: true,
+  value: values,
+  onValueChange: setValues,
+});
+```
+  </div>
+</div>
+
+## Options
+
+| Option | Type | Default |
+|---|---|---|
+| `multiple` | `boolean` | `false` |
+| `value` | `string[]` | — |
+| `defaultValue` | `string[]` | `[]` |
+| `onValueChange` | `(values: string[]) => void` | — |
+| `closeOnSelect` | `boolean` | `true` (single) / `false` (multi) |

@@ -1,0 +1,103 @@
+---
+layout: ../../../layouts/DocsLayout.astro
+title: "VirtualSelect: Sub-Menus"
+---
+
+import { SelectSubMenuDemo } from '../../../components/select/SelectSubMenuDemo';
+
+# Sub-Menus (Cascade)
+
+<p className="text-lg text-base-content/70 !mt-2 mb-4">
+  Drill into nested option hierarchies with cascade sub-menus. Supports sync and async children loading.
+</p>
+
+## File Tree Explorer
+
+<div className="grid grid-cols-1 lg:grid-cols-5 gap-8 my-6 not-prose">
+  <div className="lg:col-span-3">
+    <SelectSubMenuDemo client:load />
+  </div>
+  <div className="lg:col-span-2 text-sm">
+    <p className="mb-3 text-base-content/70">Pass a <code>cascade</code> config to enable drill-down sub-menus:</p>
+```tsx
+import { useVirtualSelect } from 'virtualized-ui';
+import type { CascadeConfig } from 'virtualized-ui';
+
+interface FileNode {
+  id: string;
+  name: string;
+  type: 'folder' | 'file';
+}
+
+const cascade: CascadeConfig<FileNode> = {
+  getChildren: (node) => {
+    if (node.type === 'file') return null;
+    return fetchChildren(node.id); // sync or async
+  },
+  hasChildren: (node) => node.type === 'folder',
+};
+
+const select = useVirtualSelect({
+  options: rootItems,
+  getOptionValue: (n) => n.id,
+  getOptionLabel: (n) => n.name,
+  cascade,
+});
+```
+
+    <p className="mt-4 mb-3 text-base-content/70">Open sub-menus programmatically:</p>
+```tsx
+// Open a sub-menu for a specific option
+select.openSubMenu(folderNode);
+
+// Close all open sub-menus
+select.closeSubMenus();
+
+// Access sub-menu state
+select.subMenus; // SubMenuState[]
+```
+  </div>
+</div>
+
+## CascadeConfig
+
+| Option | Type | Description |
+|---|---|---|
+| `getChildren` | `(option: T) => T[] \| Promise<T[]> \| null` | Return child options (null = no children) |
+| `hasChildren` | `(option: T) => boolean` | Optional quick check to show expand indicator |
+
+## SubMenuState
+
+Each open sub-menu exposes its state:
+
+| Field | Type | Description |
+|---|---|---|
+| `parentOption` | `T` | The option that opened this sub-menu |
+| `parentValue` | `string` | The parent's value string |
+| `options` | `T[]` | Child options in this sub-menu |
+| `depth` | `number` | Nesting depth (0-indexed) |
+| `isLoading` | `boolean` | Whether async children are loading |
+| `focusedIndex` | `number` | Currently focused child index |
+
+## Async Children
+
+Return a `Promise` from `getChildren` to load children asynchronously. The sub-menu shows a loading state while the promise resolves:
+
+```tsx
+const cascade: CascadeConfig<Category> = {
+  getChildren: async (category) => {
+    const res = await fetch(`/api/categories/${category.id}/children`);
+    return res.json();
+  },
+  hasChildren: (category) => category.hasSubcategories,
+};
+```
+
+## Keyboard Navigation
+
+| Key | Action |
+|---|---|
+| `ArrowRight` | Open sub-menu for focused option |
+| `ArrowLeft` | Close deepest sub-menu |
+| `Escape` | Close deepest sub-menu (or close menu if none) |
+| `Enter` | Select focused option / open sub-menu for folders |

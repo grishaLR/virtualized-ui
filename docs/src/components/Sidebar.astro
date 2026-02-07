@@ -18,6 +18,15 @@ const listPages = [
   { href: '/components/list/social-feed', label: 'Social Feed' },
 ]
 
+const selectPages = [
+  { href: '/components/select', label: 'Overview' },
+  { href: '/components/select/searchable', label: 'Searchable' },
+  { href: '/components/select/multi-select', label: 'Multi-Select' },
+  { href: '/components/select/grouped', label: 'Grouped' },
+  { href: '/components/select/async', label: 'Async' },
+  { href: '/components/select/submenu', label: 'Sub-Menus' },
+]
+
 const links = [
   { href: '/', label: 'Home' },
   { href: '/getting-started', label: 'Getting Started' },
@@ -26,12 +35,13 @@ const links = [
 const currentPath = Astro.url.pathname.replace(/\/$/, '') || '/'
 const isTablePage = currentPath.startsWith('/components/table')
 const isListPage = currentPath.startsWith('/components/list')
+const isSelectPage = currentPath.startsWith('/components/select')
 ---
 
 <aside class="bg-base-200 w-72 min-h-screen p-6">
   <div class="mb-8">
     <a href="/" class="text-xl font-bold">virtualized-ui</a>
-    <p class="text-sm text-base-content/60 mt-1">v0.2.0</p>
+    <p class="text-sm text-base-content/60 mt-1">v0.3.0</p>
   </div>
 
   <ul class="menu menu-sm gap-1">
@@ -90,12 +100,23 @@ const isListPage = currentPath.startsWith('/components/list')
         </details>
       </li>
 
-      {/* VirtualSelect - coming soon */}
+      {/* VirtualSelect section */}
       <li>
-        <span class="text-base-content/40 cursor-not-allowed">
-          VirtualSelect
-          <span class="badge badge-xs badge-ghost">soon</span>
-        </span>
+        <details open={isSelectPage}>
+          <summary class:list={["font-medium", { "text-primary": isSelectPage }]}>VirtualSelect</summary>
+          <ul>
+            {selectPages.map((link) => (
+              <li>
+                <a
+                  href={link.href}
+                  class:list={[{ active: currentPath === link.href }]}
+                >
+                  {link.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </details>
       </li>
     </ul>
   </div>

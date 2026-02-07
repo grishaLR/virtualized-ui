@@ -1,0 +1,94 @@
+---
+layout: ../../../layouts/DocsLayout.astro
+title: "VirtualSelect: Grouped Options"
+---
+
+import { SelectGroupedDemo } from '../../../components/select/SelectGroupedDemo';
+
+# Grouped Options
+
+<p className="text-lg text-base-content/70 !mt-2 mb-4">
+  Organize options into categories with styled group headers. Search filters within groups automatically.
+</p>
+
+## Categorized Options
+
+<div className="grid grid-cols-1 lg:grid-cols-5 gap-8 my-6 not-prose">
+  <div className="lg:col-span-3">
+    <SelectGroupedDemo client:load />
+  </div>
+  <div className="lg:col-span-2 text-sm">
+    <p className="mb-3 text-base-content/70">Pass an array of <code>OptionGroup</code> objects:</p>
+```tsx
+import { useVirtualSelect } from 'virtualized-ui';
+import type { OptionGroup } from 'virtualized-ui';
+
+interface MenuItem {
+  id: string;
+  name: string;
+  price: string;
+}
+
+const groups: OptionGroup<MenuItem>[] = [
+  {
+    label: 'Appetizers',
+    options: [
+      { id: 'bruschetta', name: 'Bruschetta', price: '$8' },
+      { id: 'calamari', name: 'Fried Calamari', price: '$12' },
+    ],
+  },
+  {
+    label: 'Main Courses',
+    options: [
+      { id: 'steak', name: 'Ribeye Steak', price: '$32' },
+      { id: 'salmon', name: 'Pan-Seared Salmon', price: '$26' },
+    ],
+  },
+];
+
+const select = useVirtualSelect({
+  options: groups,
+  getOptionValue: (m) => m.id,
+  getOptionLabel: (m) => m.name,
+  searchable: true,
+});
+```
+
+    <p className="mt-4 mb-3 text-base-content/70">Group headers appear in <code>flattenedItems</code> with <code>type: 'group-header'</code>:</p>
+```tsx
+select.flattenedItems.forEach((item) => {
+  if (item.type === 'group-header') {
+    // Render header: item.groupLabel
+  } else {
+    // Render option: item.option
+  }
+});
+```
+  </div>
+</div>
+
+## OptionGroup Type
+
+| Field | Type | Description |
+|---|---|---|
+| `label` | `string` | Display text for the group header |
+| `options` | `T[]` | Array of options in this group |
+
+## Component Slots
+
+Customize group headers with the `GroupHeader` slot:
+
+```tsx
+<VirtualSelect
+  options={groups}
+  getOptionValue={(m) => m.id}
+  getOptionLabel={(m) => m.name}
+  components={{
+    GroupHeader: ({ label }) => (
+      <div style={{ padding: '8px 12px', fontWeight: 700, color: '#666' }}>
+        {label}
+      </div>
+    ),
+  }}
+/>
+```

@@ -1,0 +1,62 @@
+---
+layout: ../../../layouts/DocsLayout.astro
+title: "VirtualSelect: Searchable"
+---
+
+import { SelectSearchableDemo } from '../../../components/select/SelectSearchableDemo';
+
+# Searchable
+
+<p className="text-lg text-base-content/70 !mt-2 mb-4">
+  Type to filter options instantly. Supports custom filter functions for searching across multiple fields.
+</p>
+
+## Type-to-Filter
+
+<div className="grid grid-cols-1 lg:grid-cols-5 gap-8 my-6 not-prose">
+  <div className="lg:col-span-3">
+    <SelectSearchableDemo client:load />
+  </div>
+  <div className="lg:col-span-2 text-sm">
+    <p className="mb-3 text-base-content/70">Enable search with a single prop:</p>
+```tsx
+const select = useVirtualSelect({
+  options: cities,
+  getOptionValue: (c) => c.id,
+  getOptionLabel: (c) => c.name,
+  searchable: true,
+});
+```
+
+    <p className="mt-4 mb-3 text-base-content/70">Use a custom filter to search across multiple fields:</p>
+```tsx
+useVirtualSelect({
+  searchable: true,
+  filterOption: (option, input) =>
+    option.name.toLowerCase().includes(input.toLowerCase()) ||
+    option.country.toLowerCase().includes(input.toLowerCase()) ||
+    option.timezone.toLowerCase().includes(input.toLowerCase()),
+});
+```
+
+    <p className="mt-4 mb-3 text-base-content/70">Control the search value externally:</p>
+```tsx
+const [search, setSearch] = useState('');
+useVirtualSelect({
+  searchable: true,
+  searchValue: search,
+  onSearchChange: setSearch,
+});
+```
+  </div>
+</div>
+
+## Options
+
+| Option | Type | Default |
+|---|---|---|
+| `searchable` | `boolean` | `false` |
+| `searchValue` | `string` | — |
+| `onSearchChange` | `(value: string) => void` | — |
+| `filterOption` | `(option: T, input: string) => boolean` | label includes input |
+| `clearSearchOnSelect` | `boolean` | `true` |

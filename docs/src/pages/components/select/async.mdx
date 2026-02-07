@@ -1,0 +1,85 @@
+---
+layout: ../../../layouts/DocsLayout.astro
+title: "VirtualSelect: Async Loading"
+---
+
+import { SelectAsyncDemo } from '../../../components/select/SelectAsyncDemo';
+
+# Async Loading
+
+<p className="text-lg text-base-content/70 !mt-2 mb-4">
+  Load options from an API with built-in debounce, caching, and loading states. No external state management needed.
+</p>
+
+## Async Search
+
+<div className="grid grid-cols-1 lg:grid-cols-5 gap-8 my-6 not-prose">
+  <div className="lg:col-span-3">
+    <SelectAsyncDemo client:load />
+  </div>
+  <div className="lg:col-span-2 text-sm">
+    <p className="mb-3 text-base-content/70">Pass an <code>async</code> config object instead of static <code>options</code>:</p>
+```tsx
+import { useVirtualSelect } from 'virtualized-ui';
+import type { AsyncConfig } from 'virtualized-ui';
+
+const asyncConfig: AsyncConfig<User> = {
+  loadOptions: async (inputValue) => {
+    const res = await fetch(
+      `/api/users?q=${inputValue}`
+    );
+    return res.json();
+  },
+  debounceMs: 300,
+  loadOnOpen: true,
+  cacheTtlMs: 30000,
+};
+
+const select = useVirtualSelect({
+  getOptionValue: (u) => u.id,
+  getOptionLabel: (u) => u.name,
+  async: asyncConfig,
+  searchable: true,
+});
+
+// Loading state
+select.isLoading; // true while fetching
+```
+
+    <p className="mt-4 mb-3 text-base-content/70">The hook handles debouncing, caching, and cleanup automatically. When <code>async</code> is provided, static <code>options</code> are ignored.</p>
+  </div>
+</div>
+
+## AsyncConfig
+
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `loadOptions` | `(input: string) => Promise<T[] \| OptionGroup<T>[]>` | required | Fetch function |
+| `debounceMs` | `number` | `300` | Debounce delay in ms |
+| `loadOnOpen` | `boolean` | `true` | Call loadOptions when menu opens |
+| `cacheTtlMs` | `number` | `0` | Cache TTL in ms (0 = no cache) |
+
+## Loading & Empty States
+
+The `isLoading` return value lets you render custom loading UI:
+
+```tsx
+const { isLoading, flattenedItems } = useVirtualSelect({ async: asyncConfig });
+
+if (isLoading) return <Spinner />;
+if (flattenedItems.length === 0) return <p>No results</p>;
+```
+
+Or customize via component slots:
+
+```tsx
+<VirtualSelect
+  async={asyncConfig}
+  components={{
+    Loading: () => <div>Searching...</div>,
+    NoOptions: ({ searchValue }) => (
+      <div>No results for "{searchValue}"</div>
+    ),
+  }}
+/>
+```
