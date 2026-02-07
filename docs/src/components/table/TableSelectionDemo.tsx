@@ -65,7 +65,7 @@ export function TableSelectionDemo({ rowCount = 100 }: { rowCount?: number }) {
     data,
     columns,
     enableRowSelection: true,
-    rowHeight: 44,
+    estimatedRowHeight: 44,
     getRowId: (row) => String(row.id),
   });
 

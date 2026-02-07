@@ -309,7 +309,7 @@ export const WithRowExpansion: Story = {
           enableRowExpansion
           expanded={expanded}
           onExpandedChange={setExpanded}
-          expandedRowHeight={150}
+          estimatedExpandedRowHeight={150}
           renderExpandedRow={renderExpandedRow}
           getRowId={(row) => String(row.id)}
           className="expand-table"
@@ -387,7 +387,7 @@ export const RowExpansionWithSelection: Story = {
           enableRowSelection
           rowSelection={rowSelection}
           onRowSelectionChange={setRowSelection}
-          expandedRowHeight={200}
+          estimatedExpandedRowHeight={200}
           renderExpandedRow={renderExpandedRow}
           getRowId={(row) => String(row.id)}
         />
@@ -670,14 +670,14 @@ export const WithKeyboardNavigation: Story = {
           height="100%"
           enableKeyboardNavigation
           focusedRowIndex={focusedRowIndex}
-          onFocusedRowChange={setFocusedRowIndex}
+          onFocusedRowIndexChange={setFocusedRowIndex}
           enableRowSelection
           rowSelection={rowSelection}
           onRowSelectionChange={setRowSelection}
           enableRowExpansion
           expanded={expanded}
           onExpandedChange={setExpanded}
-          expandedRowHeight={80}
+          estimatedExpandedRowHeight={80}
           renderExpandedRow={renderExpandedRow}
           getRowId={(row) => String(row.id)}
           className="keyboard-table"
@@ -859,7 +859,7 @@ export const KitchenSink: Story = {
           enableRowExpansion
           expanded={expanded}
           onExpandedChange={setExpanded}
-          expandedRowHeight={80}
+          estimatedExpandedRowHeight={80}
           renderExpandedRow={renderExpandedRow}
           enableColumnResizing
           columnSizing={columnSizing}
@@ -869,7 +869,7 @@ export const KitchenSink: Story = {
           onColumnOrderChange={setColumnOrder}
           enableKeyboardNavigation
           focusedRowIndex={focusedRowIndex}
-          onFocusedRowChange={setFocusedRowIndex}
+          onFocusedRowIndexChange={setFocusedRowIndex}
           getRowId={(row) => String(row.id)}
           className="kitchen-sink"
         />

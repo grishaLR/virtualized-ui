@@ -1,3 +1,4 @@
+import { useId } from 'react';
 import { useVirtualList } from './useVirtualList';
 import type { VirtualListProps } from './types';
 
@@ -25,11 +26,16 @@ export function VirtualList<TData>(props: VirtualListProps<TData>) {
     data,
   } = useVirtualList({ ...hookOptions, enableKeyboardNavigation });
 
+  const listId = useId();
+  const focusedItemId =
+    enableKeyboardNavigation && focusedIndex >= 0 ? `${listId}-item-${focusedIndex}` : undefined;
+
   return (
     <div
       ref={containerRef}
       role="list"
       aria-label={ariaLabel}
+      aria-activedescendant={focusedItemId}
       className={className}
       tabIndex={enableKeyboardNavigation ? 0 : undefined}
       style={{
@@ -45,14 +51,18 @@ export function VirtualList<TData>(props: VirtualListProps<TData>) {
       <div style={{ height: totalSize, position: 'relative' }}>
         {virtualItems.map((vi) => {
           const item = data[vi.index];
+          if (!item) return null;
           const isFocused = enableKeyboardNavigation === true && vi.index === focusedIndex;
 
           return (
             <div
               key={vi.key}
               ref={measureElement}
+              id={`${listId}-item-${vi.index}`}
               data-index={vi.index}
               role="listitem"
+              aria-setsize={data.length}
+              aria-posinset={vi.index + 1}
               data-focused={isFocused || undefined}
               style={{
                 position: 'absolute',

@@ -34,6 +34,7 @@ export function VirtualTable<TData>(props: VirtualTableProps<TData>) {
   const enableColumnResizing = tableOptions.enableColumnResizing;
   const enableColumnReordering = tableOptions.enableColumnReordering;
   const enableKeyboardNavigation = tableOptions.enableKeyboardNavigation;
+  const enableRowSelection = tableOptions.enableRowSelection;
 
   // Drag state for column reordering
   const [draggedColumnId, setDraggedColumnId] = useState<string | null>(null);
@@ -41,6 +42,8 @@ export function VirtualTable<TData>(props: VirtualTableProps<TData>) {
   return (
     <div
       ref={containerRef}
+      role="grid"
+      aria-rowcount={rows.length}
       className={className}
       tabIndex={enableKeyboardNavigation ? 0 : undefined}
       style={{
@@ -70,88 +73,102 @@ export function VirtualTable<TData>(props: VirtualTableProps<TData>) {
           {headerGroups.map((headerGroup) => (
             <tr
               key={headerGroup.id}
+              role="row"
               style={{
                 display: 'flex',
                 width: '100%',
               }}
             >
-              {headerGroup.headers.map((header) => (
-                <th
-                  key={header.id}
-                  draggable={enableColumnReordering && !header.isPlaceholder}
-                  data-dragging={draggedColumnId === header.column.id || undefined}
-                  onDragStart={
-                    enableColumnReordering
-                      ? (e) => {
-                          setDraggedColumnId(header.column.id);
-                          e.dataTransfer.effectAllowed = 'move';
-                        }
-                      : undefined
-                  }
-                  onDragOver={
-                    enableColumnReordering
-                      ? (e) => {
-                          e.preventDefault();
-                          e.dataTransfer.dropEffect = 'move';
-                        }
-                      : undefined
-                  }
-                  onDrop={
-                    enableColumnReordering
-                      ? (e) => {
-                          e.preventDefault();
-                          if (draggedColumnId && draggedColumnId !== header.column.id) {
-                            reorderColumn(draggedColumnId, header.column.id);
-                          }
-                        }
-                      : undefined
-                  }
-                  onDragEnd={enableColumnReordering ? () => setDraggedColumnId(null) : undefined}
-                  style={{
-                    flex: `0 0 ${header.getSize()}px`,
-                    cursor: enableColumnReordering
-                      ? 'grab'
-                      : header.column.getCanSort()
-                        ? 'pointer'
-                        : 'default',
-                    position: 'relative',
-                    opacity: draggedColumnId === header.column.id ? 0.5 : 1,
-                  }}
-                  onClick={
-                    !enableColumnReordering ? header.column.getToggleSortingHandler() : undefined
-                  }
-                >
-                  {header.isPlaceholder
-                    ? null
-                    : flexRender(header.column.columnDef.header, header.getContext())}
-                  {header.column.getIsSorted() === 'asc' && ' ↑'}
-                  {header.column.getIsSorted() === 'desc' && ' ↓'}
+              {headerGroup.headers.map((header) => {
+                const sortDir = header.column.getIsSorted();
+                const ariaSort = header.column.getCanSort()
+                  ? sortDir === 'asc'
+                    ? ('ascending' as const)
+                    : sortDir === 'desc'
+                      ? ('descending' as const)
+                      : ('none' as const)
+                  : undefined;
 
-                  {/* Column resize handle */}
-                  {enableColumnResizing && header.column.getCanResize() && (
-                    <div
-                      onMouseDown={header.getResizeHandler()}
-                      onTouchStart={header.getResizeHandler()}
-                      onClick={(e) => e.stopPropagation()}
-                      className="virtual-table-resizer"
-                      data-resizing={header.column.getIsResizing() || undefined}
-                      style={{
-                        position: 'absolute',
-                        right: 0,
-                        top: 0,
-                        height: '100%',
-                        width: '5px',
-                        cursor: 'col-resize',
-                        userSelect: 'none',
-                        touchAction: 'none',
-                        background: header.column.getIsResizing()
-                          ? 'rgba(0, 0, 0, 0.5)'
-                          : 'transparent',
-                      }}
-                    />
-                  )}
-                </th>
-              ))}
+                return (
+                  <th
+                    key={header.id}
+                    role="columnheader"
+                    aria-sort={ariaSort}
+                    draggable={enableColumnReordering && !header.isPlaceholder}
+                    data-dragging={draggedColumnId === header.column.id || undefined}
+                    onDragStart={
+                      enableColumnReordering
+                        ? (e) => {
+                            setDraggedColumnId(header.column.id);
+                            e.dataTransfer.effectAllowed = 'move';
+                          }
+                        : undefined
+                    }
+                    onDragOver={
+                      enableColumnReordering
+                        ? (e) => {
+                            e.preventDefault();
+                            e.dataTransfer.dropEffect = 'move';
+                          }
+                        : undefined
+                    }
+                    onDrop={
+                      enableColumnReordering
+                        ? (e) => {
+                            e.preventDefault();
+                            if (draggedColumnId && draggedColumnId !== header.column.id) {
+                              reorderColumn(draggedColumnId, header.column.id);
+                            }
+                          }
+                        : undefined
+                    }
+                    onDragEnd={enableColumnReordering ? () => setDraggedColumnId(null) : undefined}
+                    style={{
+                      flex: `0 0 ${header.getSize()}px`,
+                      cursor: enableColumnReordering
+                        ? 'grab'
+                        : header.column.getCanSort()
+                          ? 'pointer'
+                          : 'default',
+                      position: 'relative',
+                      opacity: draggedColumnId === header.column.id ? 0.5 : 1,
+                    }}
+                    onClick={
+                      !enableColumnReordering ? header.column.getToggleSortingHandler() : undefined
+                    }
+                  >
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(header.column.columnDef.header, header.getContext())}
+                    {header.column.getIsSorted() === 'asc' && ' ↑'}
+                    {header.column.getIsSorted() === 'desc' && ' ↓'}
+
+                    {/* Column resize handle */}
+                    {enableColumnResizing && header.column.getCanResize() && (
+                      <div
+                        onMouseDown={header.getResizeHandler()}
+                        onTouchStart={header.getResizeHandler()}
+                        onClick={(e) => e.stopPropagation()}
+                        className="virtual-table-resizer"
+                        data-resizing={header.column.getIsResizing() || undefined}
+                        style={{
+                          position: 'absolute',
+                          right: 0,
+                          top: 0,
+                          height: '100%',
+                          width: '5px',
+                          cursor: 'col-resize',
+                          userSelect: 'none',
+                          touchAction: 'none',
+                          background: header.column.getIsResizing()
+                            ? 'rgba(0, 0, 0, 0.5)'
+                            : 'transparent',
+                        }}
+                      />
+                    )}
+                  </th>
+                );
+              })}
             </tr>
           ))}
         </thead>
@@ -167,6 +184,7 @@ export function VirtualTable<TData>(props: VirtualTableProps<TData>) {
             const isExpanded = row.getIsExpanded();
             const canExpand = enableRowExpansion && row.getCanExpand();
             const isFocused = enableKeyboardNavigation && virtualRow.index === focusedRowIndex;
+            const isSelected = enableRowSelection && row.getIsSelected();
 
             const handleRowClick = () => {
               if (enableKeyboardNavigation) {
@@ -180,6 +198,9 @@ export function VirtualTable<TData>(props: VirtualTableProps<TData>) {
             return (
               <tr
                 key={row.id}
+                role="row"
+                aria-rowindex={virtualRow.index + 1}
+                aria-selected={enableRowSelection ? isSelected : undefined}
                 data-index={virtualRow.index}
                 data-expanded={isExpanded || undefined}
                 data-focused={isFocused || undefined}
@@ -203,6 +224,7 @@ export function VirtualTable<TData>(props: VirtualTableProps<TData>) {
                   {row.getVisibleCells().map((cell) => (
                     <td
                       key={cell.id}
+                      role="gridcell"
                       style={{
                         flex: `0 0 ${cell.column.getSize()}px`,
                       }}

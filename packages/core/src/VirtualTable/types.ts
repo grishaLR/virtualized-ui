@@ -18,8 +18,8 @@ export interface VirtualTableProps<TData> {
   /** TanStack Table column definitions */
   columns: ColumnDef<TData, any>[];
 
-  /** Height of each row in pixels (used for virtualization) */
-  rowHeight?: number;
+  /** Estimated height of each row in pixels (used for virtualization) */
+  estimatedRowHeight?: number;
 
   /** Height of the table container (CSS value) */
   height?: number | string;
@@ -84,8 +84,8 @@ export interface VirtualTableProps<TData> {
   /** Callback when expanded state changes */
   onExpandedChange?: (expanded: ExpandedState) => void;
 
-  /** Height of expanded row content in pixels */
-  expandedRowHeight?: number;
+  /** Estimated height of expanded row content in pixels */
+  estimatedExpandedRowHeight?: number;
 
   /** Render function for expanded row content */
   renderExpandedRow?: (row: Row<TData>) => ReactNode;
@@ -108,8 +108,8 @@ export interface VirtualTableProps<TData> {
   /** Controlled focused row index */
   focusedRowIndex?: number;
 
-  /** Callback when focused row changes */
-  onFocusedRowChange?: (index: number) => void;
+  /** Callback when focused row index changes */
+  onFocusedRowIndexChange?: (index: number) => void;
 
   /** Class name for the container */
   className?: string;
@@ -142,7 +142,7 @@ export interface UseVirtualTableOptions<TData> extends Pick<
   VirtualTableProps<TData>,
   | 'data'
   | 'columns'
-  | 'rowHeight'
+  | 'estimatedRowHeight'
   | 'overscan'
   | 'enableRowSelection'
   | 'rowSelection'
@@ -162,12 +162,12 @@ export interface UseVirtualTableOptions<TData> extends Pick<
   | 'enableRowExpansion'
   | 'expanded'
   | 'onExpandedChange'
-  | 'expandedRowHeight'
+  | 'estimatedExpandedRowHeight'
   | 'getRowCanExpand'
   | 'getRowId'
   | 'enableKeyboardNavigation'
   | 'focusedRowIndex'
-  | 'onFocusedRowChange'
+  | 'onFocusedRowIndexChange'
   | 'onScrollToBottom'
   | 'scrollBottomThreshold'
 > {}

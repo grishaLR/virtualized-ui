@@ -24,7 +24,7 @@ import { TableBasicDemo } from '../../../components/table/TableBasicDemo';
 const { table, rows, virtualItems, totalSize, containerRef } = useVirtualTable({
   data,
   columns,
-  rowHeight: 44,
+  estimatedRowHeight: 44,
 });
 ```
     <div className="mt-4 overflow-x-auto">
@@ -33,7 +33,7 @@ const { table, rows, virtualItems, totalSize, containerRef } = useVirtualTable({
         <tbody>
           <tr><td><code>data</code></td><td><code>TData[]</code></td><td>required</td></tr>
           <tr><td><code>columns</code></td><td><code>ColumnDef&lt;TData&gt;[]</code></td><td>required</td></tr>
-          <tr><td><code>rowHeight</code></td><td><code>number</code></td><td>40</td></tr>
+          <tr><td><code>estimatedRowHeight</code></td><td><code>number</code></td><td>40</td></tr>
           <tr><td><code>overscan</code></td><td><code>number</code></td><td>5</td></tr>
           <tr><td><code>getRowId</code></td><td><code>(row) =&gt; string</code></td><td>—</td></tr>
         </tbody>

@@ -6,12 +6,13 @@ import type {
   FlattenedItem,
   OptionsOrGroups,
   OptionGroup,
-  SubMenuState,
 } from './types';
+import { useSelectAsync } from './useSelectAsync';
+import { useSelectCascade } from './useSelectCascade';
+import { useSelectKeyboard } from './useSelectKeyboard';
 
 const DEFAULT_ESTIMATED_OPTION_HEIGHT = 36;
 const DEFAULT_OVERSCAN = 5;
-const DEFAULT_DEBOUNCE_MS = 300;
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -132,25 +133,13 @@ export function useVirtualSelect<TOption>(
   const menuRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const optionsByValueRef = useRef<Map<string, TOption>>(new Map());
 
   // ---- internal state (uncontrolled) ----
   const [internalValue, setInternalValue] = useState<string[]>(defaultValue);
   const [internalSearchValue, setInternalSearchValue] = useState('');
   const [internalIsOpen, setInternalIsOpen] = useState(defaultIsOpen);
   const [internalFocusedIndex, setInternalFocusedIndex] = useState(-1);
-
-  // ---- async state ----
-  const [asyncOptions, setAsyncOptions] = useState<OptionsOrGroups<TOption>>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const loadIdRef = useRef(0);
-  const cacheRef = useRef<Map<string, { data: OptionsOrGroups<TOption>; expiresAt: number }>>(
-    new Map()
-  );
-  const optionsByValueRef = useRef<Map<string, TOption>>(new Map());
-  const debounceTimerRef = useRef<ReturnType<typeof setTimeout>>();
-
-  // ---- sub-menus ----
-  const [subMenus, setSubMenus] = useState<SubMenuState<TOption>[]>([]);
 
   // ---- resolved state ----
   const selectedValues = controlledValue ?? internalValue;
@@ -203,6 +192,16 @@ export function useVirtualSelect<TOption>(
       }
     },
     [onFocusedIndexChange]
+  );
+
+  // ---- sub-hooks ----
+  const { asyncOptions, isLoading, loadAsync, debouncedLoadAsync } =
+    useSelectAsync<TOption>(asyncConfig);
+
+  const { subMenus, setSubMenus, openSubMenu, closeSubMenus } = useSelectCascade<TOption>(
+    cascadeConfig,
+    getOptionValue,
+    optionsByValueRef
   );
 
   // ---- options pipeline ----
@@ -268,56 +267,6 @@ export function useVirtualSelect<TOption>(
 
   const getOptionByValue = useCallback((value: string) => optionsByValueRef.current.get(value), []);
 
-  // ---- async loading ----
-  const loadAsync = useCallback(
-    (input: string) => {
-      if (!asyncConfig) return;
-
-      // Check cache
-      const cached = cacheRef.current.get(input);
-      if (cached && cached.expiresAt > Date.now()) {
-        setAsyncOptions(cached.data);
-        setIsLoading(false);
-        return;
-      }
-
-      setIsLoading(true);
-      const currentLoadId = ++loadIdRef.current;
-
-      asyncConfig.loadOptions(input).then(
-        (result) => {
-          // Stale guard
-          if (currentLoadId !== loadIdRef.current) return;
-
-          setAsyncOptions(result);
-          setIsLoading(false);
-
-          // Cache
-          if (asyncConfig.cacheTtlMs && asyncConfig.cacheTtlMs > 0) {
-            cacheRef.current.set(input, {
-              data: result,
-              expiresAt: Date.now() + asyncConfig.cacheTtlMs,
-            });
-          }
-        },
-        () => {
-          if (currentLoadId !== loadIdRef.current) return;
-          setIsLoading(false);
-        }
-      );
-    },
-    [asyncConfig, setIsLoading]
-  );
-
-  const debouncedLoadAsync = useCallback(
-    (input: string) => {
-      if (debounceTimerRef.current) clearTimeout(debounceTimerRef.current);
-      const delay = asyncConfig?.debounceMs ?? DEFAULT_DEBOUNCE_MS;
-      debounceTimerRef.current = setTimeout(() => loadAsync(input), delay);
-    },
-    [asyncConfig?.debounceMs, loadAsync]
-  );
-
   // ---- actions ----
   const open = useCallback(() => {
     if (disabled) return;
@@ -328,7 +277,7 @@ export function useVirtualSelect<TOption>(
     if (asyncConfig && asyncConfig.loadOnOpen !== false) {
       loadAsync(searchValue);
     }
-  }, [disabled, setIsOpen, setFocusedIndex, asyncConfig, loadAsync, searchValue]);
+  }, [disabled, setIsOpen, setFocusedIndex, setSubMenus, asyncConfig, loadAsync, searchValue]);
 
   const close = useCallback(() => {
     setIsOpen(false);
@@ -337,7 +286,7 @@ export function useVirtualSelect<TOption>(
     if (searchable && clearSearchOnSelect) {
       setSearchValue('');
     }
-  }, [setIsOpen, setFocusedIndex, searchable, clearSearchOnSelect, setSearchValue]);
+  }, [setIsOpen, setFocusedIndex, setSubMenus, searchable, clearSearchOnSelect, setSearchValue]);
 
   const toggle = useCallback(() => {
     if (isOpen) {
@@ -409,238 +358,30 @@ export function useVirtualSelect<TOption>(
     setSelectedValues([]);
   }, [setSelectedValues]);
 
-  // ---- cascade sub-menus ----
-  const openSubMenu = useCallback(
-    (option: TOption) => {
-      if (!cascadeConfig) return;
-
-      const parentValue = getOptionValue(option);
-
-      // Check if already open for this option
-      if (subMenus.some((sm) => sm.parentValue === parentValue)) return;
-
-      // Determine the real depth: if the parent option lives inside an
-      // existing sub-menu at depth D, the new sub-menu is at D+1.
-      // If the parent is a root-level option, the new sub-menu is at depth 0.
-      let newDepth = 0;
-      for (const sm of subMenus) {
-        if (sm.options.some((o) => getOptionValue(o) === parentValue)) {
-          newDepth = sm.depth + 1;
-          break;
-        }
-      }
-
-      const result = cascadeConfig.getChildren(option);
-
-      if (result === null) return;
-
-      if (result instanceof Promise) {
-        // Add a loading sub-menu, trimming any at the same depth or deeper
-        setSubMenus((prev) => [
-          ...prev.filter((sm) => sm.depth < newDepth),
-          {
-            parentOption: option,
-            parentValue,
-            options: [],
-            depth: newDepth,
-            isLoading: true,
-            focusedIndex: -1,
-          },
-        ]);
-
-        result.then((children) => {
-          // Index children
-          for (const child of children) {
-            optionsByValueRef.current.set(getOptionValue(child), child);
-          }
-          setSubMenus((prev) =>
-            prev.map((sm) =>
-              sm.parentValue === parentValue ? { ...sm, options: children, isLoading: false } : sm
-            )
-          );
-        });
-      } else {
-        // Sync children — trim any at the same depth or deeper, then append
-        for (const child of result) {
-          optionsByValueRef.current.set(getOptionValue(child), child);
-        }
-        setSubMenus((prev) => [
-          ...prev.filter((sm) => sm.depth < newDepth),
-          {
-            parentOption: option,
-            parentValue,
-            options: result,
-            depth: newDepth,
-            isLoading: false,
-            focusedIndex: -1,
-          },
-        ]);
-      }
-    },
-    [cascadeConfig, getOptionValue, subMenus]
-  );
-
-  const closeSubMenus = useCallback(() => {
-    setSubMenus([]);
-  }, []);
-
-  // ---- keyboard helpers ----
-  const findNextSelectableIndex = useCallback(
-    (from: number, direction: 1 | -1): number => {
-      let index = from;
-      while (index >= 0 && index < flattenedItems.length) {
-        const item = flattenedItems[index];
-        if (item.type === 'option' && !item.disabled) return index;
-        index += direction;
-      }
-      return -1;
-    },
-    [flattenedItems]
-  );
-
-  // ---- keyboard navigation ----
-  const handleKeyDown = useCallback(
-    (e: React.KeyboardEvent) => {
-      if (disabled) return;
-
-      switch (e.key) {
-        case 'ArrowDown': {
-          e.preventDefault();
-          if (!isOpen) {
-            open();
-            return;
-          }
-          const next = findNextSelectableIndex(focusedIndex + 1, 1);
-          if (next !== -1) {
-            setFocusedIndex(next);
-            virtualizer.scrollToIndex(next, { align: 'auto' });
-          }
-          break;
-        }
-        case 'ArrowUp': {
-          e.preventDefault();
-          if (!isOpen) {
-            open();
-            return;
-          }
-          const prev = findNextSelectableIndex(focusedIndex - 1, -1);
-          if (prev !== -1) {
-            setFocusedIndex(prev);
-            virtualizer.scrollToIndex(prev, { align: 'auto' });
-          }
-          break;
-        }
-        case 'Home': {
-          e.preventDefault();
-          if (isOpen) {
-            const first = findNextSelectableIndex(0, 1);
-            if (first !== -1) {
-              setFocusedIndex(first);
-              virtualizer.scrollToIndex(first, { align: 'auto' });
-            }
-          }
-          break;
-        }
-        case 'End': {
-          e.preventDefault();
-          if (isOpen) {
-            const last = findNextSelectableIndex(flattenedItems.length - 1, -1);
-            if (last !== -1) {
-              setFocusedIndex(last);
-              virtualizer.scrollToIndex(last, { align: 'auto' });
-            }
-          }
-          break;
-        }
-        case 'Enter':
-        case ' ': {
-          if (!isOpen) {
-            e.preventDefault();
-            open();
-            return;
-          }
-          // Space shouldn't select when searchable (it's a typing character)
-          if (e.key === ' ' && searchable) return;
-          e.preventDefault();
-          if (focusedIndex >= 0 && focusedIndex < flattenedItems.length) {
-            const item = flattenedItems[focusedIndex];
-            if (item.type === 'option' && item.option && !item.disabled) {
-              const value = getOptionValue(item.option);
-              if (multiple) {
-                toggleValue(value);
-              } else {
-                selectValue(value);
-              }
-            }
-          }
-          break;
-        }
-        case 'Escape': {
-          e.preventDefault();
-          if (subMenus.length > 0) {
-            setSubMenus((prev) => prev.slice(0, -1));
-          } else if (isOpen) {
-            close();
-            triggerRef.current?.focus();
-          }
-          break;
-        }
-        case 'ArrowRight': {
-          if (cascadeConfig && isOpen && focusedIndex >= 0) {
-            e.preventDefault();
-            const item = flattenedItems[focusedIndex];
-            if (item.type === 'option' && item.option) {
-              openSubMenu(item.option);
-            }
-          }
-          break;
-        }
-        case 'ArrowLeft': {
-          if (cascadeConfig && subMenus.length > 0) {
-            e.preventDefault();
-            setSubMenus((prev) => prev.slice(0, -1));
-          }
-          break;
-        }
-        case 'Backspace': {
-          if (multiple && searchable && searchValue === '' && selectedValues.length > 0) {
-            deselectValue(selectedValues[selectedValues.length - 1]);
-          }
-          break;
-        }
-        case 'Tab': {
-          if (isOpen) {
-            close();
-          }
-          break;
-        }
-      }
-    },
-    [
-      disabled,
-      isOpen,
-      open,
-      close,
-      focusedIndex,
-      flattenedItems,
-      findNextSelectableIndex,
-      setFocusedIndex,
-      virtualizer,
-      getOptionValue,
-      multiple,
-      searchable,
-      searchValue,
-      selectedValues,
-      selectValue,
-      toggleValue,
-      deselectValue,
-      cascadeConfig,
-      openSubMenu,
-      subMenus,
-    ]
-  );
-
-  const handleMenuKeyDown = handleKeyDown;
+  // ---- keyboard ----
+  const { handleKeyDown, handleMenuKeyDown } = useSelectKeyboard<TOption>({
+    disabled,
+    isOpen,
+    open,
+    close,
+    focusedIndex,
+    setFocusedIndex,
+    flattenedItems,
+    virtualizer,
+    getOptionValue,
+    multiple,
+    searchable,
+    searchValue,
+    selectedValues,
+    selectValue,
+    toggleValue,
+    deselectValue,
+    cascadeConfig,
+    openSubMenu,
+    subMenus,
+    setSubMenus,
+    triggerRef,
+  });
 
   const handleSearchInput = useCallback(
     (value: string) => {
@@ -701,8 +442,9 @@ export function useVirtualSelect<TOption>(
       role: 'listbox' as const,
       id: listboxId,
       'aria-multiselectable': multiple || undefined,
+      'aria-activedescendant': activeDescendantId,
     }),
-    [listboxId, multiple]
+    [listboxId, multiple, activeDescendantId]
   );
 
   const getOptionProps = useCallback(

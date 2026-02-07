@@ -171,14 +171,14 @@ describe('useVirtualTable', () => {
     });
 
     it('uses controlled focused row index', () => {
-      const onFocusedRowChange = vi.fn();
+      const onFocusedRowIndexChange = vi.fn();
       const { result } = renderHook(() =>
         useVirtualTable({
           data: testData,
           columns: testColumns,
           enableKeyboardNavigation: true,
           focusedRowIndex: 0,
-          onFocusedRowChange,
+          onFocusedRowIndexChange,
         })
       );
 
@@ -188,7 +188,7 @@ describe('useVirtualTable', () => {
         result.current.setFocusedRow(2);
       });
 
-      expect(onFocusedRowChange).toHaveBeenCalledWith(2);
+      expect(onFocusedRowIndexChange).toHaveBeenCalledWith(2);
     });
   });
 
@@ -386,12 +386,78 @@ describe('useVirtualTable', () => {
         useVirtualTable({
           data: testData,
           columns: testColumns,
-          rowHeight: 60,
+          estimatedRowHeight: 60,
         })
       );
 
       // Total size should be rowHeight * number of rows
       expect(result.current.totalSize).toBe(60 * 3);
+    });
+  });
+
+  describe('edge cases', () => {
+    it('handles empty data array', () => {
+      const { result } = renderHook(() =>
+        useVirtualTable({
+          data: [],
+          columns: testColumns,
+        })
+      );
+
+      expect(result.current.rows).toHaveLength(0);
+      expect(result.current.totalSize).toBe(0);
+      expect(result.current.virtualItems).toHaveLength(0);
+    });
+
+    it('handles single-item data', () => {
+      const { result } = renderHook(() =>
+        useVirtualTable({
+          data: [testData[0]],
+          columns: testColumns,
+        })
+      );
+
+      expect(result.current.rows).toHaveLength(1);
+      expect(result.current.totalSize).toBe(40); // DEFAULT_ESTIMATED_ROW_HEIGHT
+    });
+
+    it('PageDown/PageUp keyboard navigation', () => {
+      const data = Array.from({ length: 30 }, (_, i) => ({
+        id: i,
+        name: `Person ${i}`,
+        age: 20 + i,
+      }));
+
+      const { result } = renderHook(() =>
+        useVirtualTable({
+          data,
+          columns: testColumns,
+          enableKeyboardNavigation: true,
+        })
+      );
+
+      // Focus first row
+      act(() => {
+        result.current.setFocusedRow(0);
+      });
+
+      // PageDown should jump by 10
+      act(() => {
+        const event = new KeyboardEvent('keydown', { key: 'PageDown' });
+        Object.defineProperty(event, 'preventDefault', { value: vi.fn() });
+        result.current.handleKeyDown(event as unknown as React.KeyboardEvent);
+      });
+
+      expect(result.current.focusedRowIndex).toBe(10);
+
+      // PageUp should jump back by 10
+      act(() => {
+        const event = new KeyboardEvent('keydown', { key: 'PageUp' });
+        Object.defineProperty(event, 'preventDefault', { value: vi.fn() });
+        result.current.handleKeyDown(event as unknown as React.KeyboardEvent);
+      });
+
+      expect(result.current.focusedRowIndex).toBe(0);
     });
   });
 });

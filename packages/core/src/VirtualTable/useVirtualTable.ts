@@ -15,10 +15,11 @@ import {
 import { useVirtualizer } from '@tanstack/react-virtual';
 import type { UseVirtualTableOptions } from './types';
 
-const DEFAULT_ROW_HEIGHT = 40;
-const DEFAULT_EXPANDED_ROW_HEIGHT = 200;
+const DEFAULT_ESTIMATED_ROW_HEIGHT = 40;
+const DEFAULT_ESTIMATED_EXPANDED_ROW_HEIGHT = 200;
 const DEFAULT_OVERSCAN = 5;
 const DEFAULT_SCROLL_THRESHOLD = 100;
+const PAGE_SIZE = 10;
 
 /** Extract column ID from a ColumnDef */
 function getColumnId<TData>(column: ColumnDef<TData, unknown>): string {
@@ -30,6 +31,12 @@ function getColumnId<TData>(column: ColumnDef<TData, unknown>): string {
   if ('accessorKey' in column && typeof column.accessorKey === 'string') {
     return column.accessorKey;
   }
+
+  console.warn(
+    '[virtualized-ui] Column is missing both `id` and `accessorKey`. ' +
+      'Column ordering and other features may not work correctly.',
+    column
+  );
   return '';
 }
 
@@ -37,7 +44,7 @@ export function useVirtualTable<TData>(options: UseVirtualTableOptions<TData>) {
   const {
     data,
     columns,
-    rowHeight = DEFAULT_ROW_HEIGHT,
+    estimatedRowHeight = DEFAULT_ESTIMATED_ROW_HEIGHT,
     overscan = DEFAULT_OVERSCAN,
     enableRowSelection = false,
     rowSelection: controlledRowSelection,
@@ -57,12 +64,12 @@ export function useVirtualTable<TData>(options: UseVirtualTableOptions<TData>) {
     enableRowExpansion = false,
     expanded: controlledExpanded,
     onExpandedChange,
-    expandedRowHeight = DEFAULT_EXPANDED_ROW_HEIGHT,
+    estimatedExpandedRowHeight = DEFAULT_ESTIMATED_EXPANDED_ROW_HEIGHT,
     getRowCanExpand,
     getRowId,
     enableKeyboardNavigation = false,
     focusedRowIndex: controlledFocusedRowIndex,
-    onFocusedRowChange,
+    onFocusedRowIndexChange,
     onScrollToBottom,
     scrollBottomThreshold = DEFAULT_SCROLL_THRESHOLD,
   } = options;
@@ -183,11 +190,13 @@ export function useVirtualTable<TData>(options: UseVirtualTableOptions<TData>) {
   // Dynamic row height estimation based on expanded state
   const estimateSize = useCallback(
     (index: number) => {
-      if (!enableRowExpansion) return rowHeight;
+      if (!enableRowExpansion) return estimatedRowHeight;
       const row = rows[index];
-      return row?.getIsExpanded() ? rowHeight + expandedRowHeight : rowHeight;
+      return row?.getIsExpanded()
+        ? estimatedRowHeight + estimatedExpandedRowHeight
+        : estimatedRowHeight;
     },
-    [rows, rowHeight, expandedRowHeight, enableRowExpansion]
+    [rows, estimatedRowHeight, estimatedExpandedRowHeight, enableRowExpansion]
   );
 
   const virtualizer = useVirtualizer({
@@ -233,8 +242,8 @@ export function useVirtualTable<TData>(options: UseVirtualTableOptions<TData>) {
   const setFocusedRow = useCallback(
     (index: number) => {
       const clampedIndex = Math.max(-1, Math.min(index, rows.length - 1));
-      if (onFocusedRowChange) {
-        onFocusedRowChange(clampedIndex);
+      if (onFocusedRowIndexChange) {
+        onFocusedRowIndexChange(clampedIndex);
       } else {
         setInternalFocusedRowIndex(clampedIndex);
       }
@@ -243,7 +252,7 @@ export function useVirtualTable<TData>(options: UseVirtualTableOptions<TData>) {
         virtualizer.scrollToIndex(clampedIndex, { align: 'auto' });
       }
     },
-    [rows.length, onFocusedRowChange, virtualizer]
+    [rows.length, onFocusedRowIndexChange, virtualizer]
   );
 
   // Keyboard navigation handler
@@ -261,6 +270,14 @@ export function useVirtualTable<TData>(options: UseVirtualTableOptions<TData>) {
         case 'ArrowUp':
           e.preventDefault();
           setFocusedRow(currentIndex - 1);
+          break;
+        case 'PageDown':
+          e.preventDefault();
+          setFocusedRow(currentIndex + PAGE_SIZE);
+          break;
+        case 'PageUp':
+          e.preventDefault();
+          setFocusedRow(currentIndex - PAGE_SIZE);
           break;
         case 'Home':
           e.preventDefault();

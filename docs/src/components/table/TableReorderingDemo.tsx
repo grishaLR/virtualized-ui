@@ -46,7 +46,7 @@ export function TableReorderingDemo({ rowCount = 50 }: { rowCount?: number }) {
       data,
       columns,
       enableColumnReordering: true,
-      rowHeight: 42,
+      estimatedRowHeight: 42,
     });
 
   const currentColumns =

@@ -122,8 +122,8 @@ export function TableDemo({
     enableRowSelection,
     enableRowExpansion,
     enableKeyboardNavigation,
-    rowHeight: 44,
-    expandedRowHeight: 80,
+    estimatedRowHeight: 44,
+    estimatedExpandedRowHeight: 80,
     getRowId: (row) => String(row.id),
   });
 

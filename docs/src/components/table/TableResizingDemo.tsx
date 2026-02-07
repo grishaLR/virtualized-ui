@@ -42,7 +42,7 @@ export function TableResizingDemo({ rowCount = 100 }: { rowCount?: number }) {
     columns,
     enableColumnResizing: true,
     columnResizeMode: 'onChange',
-    rowHeight: 32,
+    estimatedRowHeight: 32,
   });
 
   return (

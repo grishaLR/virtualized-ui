@@ -48,7 +48,7 @@ export function TableSortingDemo({
     columns,
     enableSorting: true,
     enableMultiSort,
-    rowHeight: 40,
+    estimatedRowHeight: 40,
   });
 
   return (

@@ -75,8 +75,8 @@ export function TableExpansionDemo({ rowCount = 50 }: { rowCount?: number }) {
     data,
     columns,
     enableRowExpansion: true,
-    rowHeight: 48,
-    expandedRowHeight: 100,
+    estimatedRowHeight: 48,
+    estimatedExpandedRowHeight: 100,
     getRowId: (row) => String(row.id),
   });
 

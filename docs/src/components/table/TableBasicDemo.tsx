@@ -40,7 +40,7 @@ export function TableBasicDemo({ rowCount = 1000 }: { rowCount?: number }) {
   const { table, rows, virtualItems, totalSize, containerRef } = useVirtualTable({
     data,
     columns,
-    rowHeight: 40,
+    estimatedRowHeight: 40,
   });
 
   return (

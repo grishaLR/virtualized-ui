@@ -475,6 +475,70 @@ describe('useVirtualList', () => {
     });
   });
 
+  describe('edge cases', () => {
+    it('handles empty data array', () => {
+      const { result } = renderHook(() =>
+        useVirtualList({
+          data: [],
+          getItemId: (item: TestItem) => item.id,
+        })
+      );
+
+      expect(result.current.totalSize).toBe(0);
+      expect(result.current.virtualItems).toHaveLength(0);
+    });
+
+    it('handles single-item data', () => {
+      const { result } = renderHook(() =>
+        useVirtualList({
+          data: [testData[0]],
+          getItemId,
+          estimatedItemHeight: 50,
+        })
+      );
+
+      expect(result.current.totalSize).toBe(50);
+    });
+
+    it('PageDown/PageUp keyboard navigation', () => {
+      const data = Array.from({ length: 30 }, (_, i) => ({
+        id: String(i),
+        text: `Item ${i}`,
+      }));
+
+      const { result } = renderHook(() =>
+        useVirtualList({
+          data,
+          getItemId,
+          enableKeyboardNavigation: true,
+        })
+      );
+
+      // Focus first item
+      act(() => {
+        result.current.setFocusedItem(0);
+      });
+
+      // PageDown should jump by 10
+      act(() => {
+        const event = new KeyboardEvent('keydown', { key: 'PageDown' });
+        Object.defineProperty(event, 'preventDefault', { value: vi.fn() });
+        result.current.handleKeyDown(event as unknown as React.KeyboardEvent);
+      });
+
+      expect(result.current.focusedIndex).toBe(10);
+
+      // PageUp should jump back by 10
+      act(() => {
+        const event = new KeyboardEvent('keydown', { key: 'PageUp' });
+        Object.defineProperty(event, 'preventDefault', { value: vi.fn() });
+        result.current.handleKeyDown(event as unknown as React.KeyboardEvent);
+      });
+
+      expect(result.current.focusedIndex).toBe(0);
+    });
+  });
+
   describe('convenience methods', () => {
     it('scrollToIndex delegates to virtualizer', () => {
       const { result } = renderHook(() =>

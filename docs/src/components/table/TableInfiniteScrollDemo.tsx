@@ -50,7 +50,7 @@ export function TableInfiniteScrollDemo() {
   const { table, rows, virtualItems, totalSize, containerRef, handleScroll } = useVirtualTable({
     data,
     columns,
-    rowHeight: 38,
+    estimatedRowHeight: 38,
     onScrollToBottom: loadMore,
     scrollBottomThreshold: 200,
   });

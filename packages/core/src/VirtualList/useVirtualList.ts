@@ -5,6 +5,7 @@ import type { UseVirtualListOptions, UseVirtualListReturn } from './types';
 const DEFAULT_ESTIMATED_ITEM_HEIGHT = 100;
 const DEFAULT_OVERSCAN = 5;
 const DEFAULT_SCROLL_THRESHOLD = 100;
+const PAGE_SIZE = 10;
 
 export function useVirtualList<TData>(
   options: UseVirtualListOptions<TData>
@@ -116,6 +117,14 @@ export function useVirtualList<TData>(
         case 'ArrowUp':
           e.preventDefault();
           setFocusedItem(currentIndex - 1);
+          break;
+        case 'PageDown':
+          e.preventDefault();
+          setFocusedItem(currentIndex + PAGE_SIZE);
+          break;
+        case 'PageUp':
+          e.preventDefault();
+          setFocusedItem(currentIndex - PAGE_SIZE);
           break;
         case 'Home':
           e.preventDefault();

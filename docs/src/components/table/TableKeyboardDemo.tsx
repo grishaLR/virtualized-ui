@@ -43,7 +43,7 @@ export function TableKeyboardDemo({ rowCount = 100 }: { rowCount?: number }) {
       columns,
       enableKeyboardNavigation: true,
       enableRowSelection: true,
-      rowHeight: 36,
+      estimatedRowHeight: 36,
       getRowId: (row) => String(row.id),
     });
 

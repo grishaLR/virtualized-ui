@@ -37,17 +37,3 @@ export type {
   DropdownIndicatorSlotProps,
   InputSlotProps,
 } from './VirtualSelect';
-
-export { createColumnHelper } from '@tanstack/react-table';
-export type {
-  ColumnDef,
-  Row,
-  RowSelectionState,
-  SortingState,
-  ExpandedState,
-  ColumnSizingState,
-  ColumnResizeMode,
-  ColumnOrderState,
-  CellContext,
-  HeaderContext,
-} from '@tanstack/react-table';

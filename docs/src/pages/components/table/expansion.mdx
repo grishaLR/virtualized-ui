@@ -22,7 +22,7 @@ const { expanded } = useVirtualTable({
   data,
   columns,
   enableRowExpansion: true,
-  expandedRowHeight: 100,
+  estimatedExpandedRowHeight: 100,
   getRowCanExpand: (row) => true,
 });
 
@@ -40,7 +40,7 @@ const { expanded } = useVirtualTable({
         <thead><tr><th>Option</th><th>Type</th><th>Default</th></tr></thead>
         <tbody>
           <tr><td><code>enableRowExpansion</code></td><td><code>boolean</code></td><td>false</td></tr>
-          <tr><td><code>expandedRowHeight</code></td><td><code>number</code></td><td>200</td></tr>
+          <tr><td><code>estimatedExpandedRowHeight</code></td><td><code>number</code></td><td>200</td></tr>
           <tr><td><code>expanded</code></td><td><code>ExpandedState</code></td><td>—</td></tr>
           <tr><td><code>onExpandedChange</code></td><td><code>(state) =&gt; void</code></td><td>—</td></tr>
         </tbody>
