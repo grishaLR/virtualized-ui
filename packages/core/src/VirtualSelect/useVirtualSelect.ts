@@ -415,24 +415,34 @@ export function useVirtualSelect<TOption>(
       if (!cascadeConfig) return;
 
       const parentValue = getOptionValue(option);
-      const depth = subMenus.length;
 
       // Check if already open for this option
       if (subMenus.some((sm) => sm.parentValue === parentValue)) return;
+
+      // Determine the real depth: if the parent option lives inside an
+      // existing sub-menu at depth D, the new sub-menu is at D+1.
+      // If the parent is a root-level option, the new sub-menu is at depth 0.
+      let newDepth = 0;
+      for (const sm of subMenus) {
+        if (sm.options.some((o) => getOptionValue(o) === parentValue)) {
+          newDepth = sm.depth + 1;
+          break;
+        }
+      }
 
       const result = cascadeConfig.getChildren(option);
 
       if (result === null) return;
 
       if (result instanceof Promise) {
-        // Add a loading sub-menu
+        // Add a loading sub-menu, trimming any at the same depth or deeper
         setSubMenus((prev) => [
-          ...prev,
+          ...prev.filter((sm) => sm.depth < newDepth),
           {
             parentOption: option,
             parentValue,
             options: [],
-            depth,
+            depth: newDepth,
             isLoading: true,
             focusedIndex: -1,
           },
@@ -450,17 +460,17 @@ export function useVirtualSelect<TOption>(
           );
         });
       } else {
-        // Sync children
+        // Sync children — trim any at the same depth or deeper, then append
         for (const child of result) {
           optionsByValueRef.current.set(getOptionValue(child), child);
         }
         setSubMenus((prev) => [
-          ...prev,
+          ...prev.filter((sm) => sm.depth < newDepth),
           {
             parentOption: option,
             parentValue,
             options: result,
-            depth,
+            depth: newDepth,
             isLoading: false,
             focusedIndex: -1,
           },

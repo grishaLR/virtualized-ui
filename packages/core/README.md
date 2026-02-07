@@ -1,6 +1,6 @@
 # virtualized-ui
 
-Headless virtualized table and list primitives for React. Built on [TanStack Table](https://tanstack.com/table) and [TanStack Virtual](https://tanstack.com/virtual).
+Headless virtualized table, list, and select primitives for React. Built on [TanStack Table](https://tanstack.com/table) and [TanStack Virtual](https://tanstack.com/virtual).
 
 ## Installation
 
@@ -20,6 +20,7 @@ yarn add virtualized-ui
 - **Headless** - You control the markup and styles
 - **Tables** - Sorting, selection, expansion, resizing, reordering
 - **Lists** - Dynamic heights, keyboard nav, scroll anchoring
+- **Select** - Single/multi select, searchable, grouped, async loading, cascade sub-menus
 - **Keyboard Navigation** - Arrow keys, Home/End, Space/Enter
 - **Infinite Scroll** - Load more data on scroll
 - **Controlled & Uncontrolled** - Flexible state management
@@ -132,6 +133,74 @@ function MyList({ items }: { items: Item[] }) {
 }
 ```
 
+### VirtualSelect
+
+```tsx
+import { useVirtualSelect } from 'virtualized-ui';
+
+interface Option {
+  value: string;
+  label: string;
+}
+
+function MySelect({ options }: { options: Option[] }) {
+  const select = useVirtualSelect({
+    options,
+    getOptionValue: (o) => o.value,
+    getOptionLabel: (o) => o.label,
+    searchable: true,
+    placeholder: 'Choose...',
+  });
+
+  return (
+    <div ref={select.containerRef} onKeyDown={select.handleKeyDown}>
+      <button ref={select.triggerRef} onClick={select.toggle}>
+        {select.selectedOptions[0]?.label ?? 'Choose...'}
+      </button>
+      {select.isOpen && (
+        <div ref={select.menuRef} style={{ maxHeight: 300, overflow: 'auto' }}>
+          <div style={{ height: select.totalSize, position: 'relative' }}>
+            {select.virtualItems.map((vi) => {
+              const item = select.flattenedItems[vi.index];
+              if (item.type !== 'option') return null;
+              return (
+                <div
+                  key={vi.key}
+                  ref={select.measureElement}
+                  data-index={vi.index}
+                  onClick={() => select.selectValue(item.option!.value)}
+                  style={{
+                    position: 'absolute',
+                    top: 0,
+                    transform: `translateY(${vi.start}px)`,
+                  }}
+                >
+                  {item.option!.label}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+```
+
+Or use the `VirtualSelect` component with slot-based customization:
+
+```tsx
+import { VirtualSelect } from 'virtualized-ui';
+
+<VirtualSelect
+  options={options}
+  getOptionValue={(o) => o.value}
+  getOptionLabel={(o) => o.label}
+  searchable
+  placeholder="Choose..."
+/>
+```
+
 ## API
 
 ### `useVirtualTable<TData>(options)`
@@ -221,6 +290,66 @@ A hook for virtualized flat lists with dynamic item heights and scroll anchoring
 | `scrollToTop` | `() => void` | Scroll to top |
 | `measureElement` | `(node) => void` | Ref callback for dynamic sizing |
 | `data` | `TData[]` | The data array |
+
+### `useVirtualSelect<TOption>(options)`
+
+A hook for virtualized select dropdowns with search, multi-select, grouped options, and async loading.
+
+#### Options
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `options` | `TOption[] \| OptionGroup<TOption>[]` | — | Static options (ignored when async is provided) |
+| `getOptionValue` | `(option) => string` | required | Extract unique string ID from an option |
+| `getOptionLabel` | `(option) => string` | required | Extract display text from an option |
+| `isOptionDisabled` | `(option) => boolean` | — | Check if an option is disabled |
+| `multiple` | `boolean` | `false` | Enable multi-select |
+| `value` | `string[]` | — | Controlled selected values |
+| `defaultValue` | `string[]` | `[]` | Initial value for uncontrolled mode |
+| `onValueChange` | `(values) => void` | — | Called when selection changes |
+| `searchable` | `boolean` | `false` | Enable search input |
+| `searchValue` | `string` | — | Controlled search value |
+| `onSearchChange` | `(value) => void` | — | Called when search text changes |
+| `filterOption` | `(option, input) => boolean` | label includes input | Custom filter function |
+| `isOpen` | `boolean` | — | Controlled open state |
+| `onOpenChange` | `(isOpen) => void` | — | Called when open state changes |
+| `async` | `AsyncConfig<TOption>` | — | Async options loading config |
+| `cascade` | `CascadeConfig<TOption>` | — | Cascade sub-menus config |
+| `estimatedOptionHeight` | `number` | `36` | Estimated option row height |
+| `overscan` | `number` | `5` | Items to render outside viewport |
+| `closeOnSelect` | `boolean` | `true` (single) / `false` (multi) | Close menu after selecting |
+| `placeholder` | `string` | — | Placeholder text |
+| `disabled` | `boolean` | `false` | Disable the entire select |
+
+#### Returns
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `virtualizer` | `Virtualizer` | TanStack Virtual instance |
+| `virtualItems` | `VirtualItem[]` | Currently visible virtual items |
+| `totalSize` | `number` | Total scrollable height |
+| `menuRef` | `RefObject<HTMLDivElement>` | Ref for menu scroll container |
+| `measureElement` | `(node) => void` | Ref callback for dynamic sizing |
+| `flattenedItems` | `FlattenedItem<TOption>[]` | Flattened items (options + group headers) |
+| `isOpen` | `boolean` | Whether dropdown is open |
+| `searchValue` | `string` | Current search text |
+| `focusedIndex` | `number` | Currently focused option index |
+| `selectedValues` | `string[]` | Array of selected value strings |
+| `selectedOptions` | `TOption[]` | Array of selected option objects |
+| `isLoading` | `boolean` | Whether async options are loading |
+| `open` / `close` / `toggle` | `() => void` | Menu open/close actions |
+| `selectValue` / `deselectValue` / `toggleValue` | `(value) => void` | Selection actions |
+| `clearAll` | `() => void` | Clear all selected values |
+| `openSubMenu` | `(option) => void` | Open cascade sub-menu for an option |
+| `closeSubMenus` | `() => void` | Close all open sub-menus |
+| `subMenus` | `SubMenuState<TOption>[]` | Currently open sub-menu states |
+| `handleKeyDown` | `(e) => void` | Keyboard event handler for container |
+| `handleMenuKeyDown` | `(e) => void` | Keyboard event handler for menu |
+| `handleSearchInput` | `(value) => void` | Search input handler |
+| `containerRef` | `RefObject<HTMLDivElement>` | Ref for root container |
+| `triggerRef` | `RefObject<HTMLButtonElement>` | Ref for trigger button |
+| `inputRef` | `RefObject<HTMLInputElement>` | Ref for search input |
+| `getTriggerProps` / `getMenuProps` / `getOptionProps` / `getInputProps` | `() => Record<string, ...>` | ARIA prop helpers |
 
 ## Documentation
 
