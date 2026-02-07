@@ -1,0 +1,109 @@
+---
+layout: ../../../layouts/DocsLayout.astro
+title: VirtualList
+---
+
+import { ListBasicDemo } from '../../../components/list/ListBasicDemo';
+
+# VirtualList
+
+<p className="text-lg text-base-content/70 !mt-2 mb-4">
+  A headless virtualized list for rendering large flat datasets.
+  Supports keyboard navigation, infinite scroll, and live prepend with scroll anchoring.
+</p>
+
+## Basic Usage
+
+<div className="grid grid-cols-1 lg:grid-cols-5 gap-8 my-6 not-prose">
+  <div className="lg:col-span-3">
+    <ListBasicDemo client:load itemCount={500} />
+  </div>
+  <div className="lg:col-span-2 text-sm">
+    <p className="mb-3 text-base-content/70">Render a virtualized list with the <code>useVirtualList</code> hook or <code>VirtualList</code> component:</p>
+```tsx
+import { useVirtualList } from 'virtualized-ui';
+
+const { virtualItems, totalSize, containerRef, measureElement } =
+  useVirtualList({
+    data,
+    getItemId: (item) => item.id,
+    estimatedItemHeight: 80,
+  });
+```
+
+    <p className="mt-4 mb-3 text-base-content/70">Or use the component API:</p>
+```tsx
+import { VirtualList } from 'virtualized-ui';
+
+<VirtualList
+  data={items}
+  getItemId={(item) => item.id}
+  height={400}
+  renderItem={({ item, index }) => (
+    <div>{item.title}</div>
+  )}
+/>
+```
+
+    <div className="mt-4 overflow-x-auto">
+      <table className="table-compact">
+        <thead><tr><th>Option</th><th>Type</th><th>Default</th></tr></thead>
+        <tbody>
+          <tr><td><code>data</code></td><td><code>TData[]</code></td><td>required</td></tr>
+          <tr><td><code>getItemId</code></td><td><code>(item, i) =&gt; string</code></td><td>required</td></tr>
+          <tr><td><code>estimatedItemHeight</code></td><td><code>number</code></td><td>100</td></tr>
+          <tr><td><code>overscan</code></td><td><code>number</code></td><td>5</td></tr>
+          <tr><td><code>gap</code></td><td><code>number</code></td><td>0</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+## Features
+
+<div className="grid md:grid-cols-2 gap-3 my-6 not-prose">
+  <a href="/components/list/infinite-scroll" className="card bg-base-200 hover:bg-base-300 transition-colors">
+    <div className="card-body py-4 px-5">
+      <h3 className="font-semibold">Infinite Scroll</h3>
+      <p className="text-sm text-base-content/60">Load more data on scroll</p>
+    </div>
+  </a>
+  <a href="/components/list/keyboard" className="card bg-base-200 hover:bg-base-300 transition-colors">
+    <div className="card-body py-4 px-5">
+      <h3 className="font-semibold">Keyboard Navigation</h3>
+      <p className="text-sm text-base-content/60">Arrow keys, Home/End</p>
+    </div>
+  </a>
+  <a href="/components/list/live-updates" className="card bg-base-200 hover:bg-base-300 transition-colors">
+    <div className="card-body py-4 px-5">
+      <h3 className="font-semibold">Live Updates</h3>
+      <p className="text-sm text-base-content/60">Prepend items with scroll anchoring</p>
+    </div>
+  </a>
+  <a href="/components/list/social-feed" className="card bg-base-200 hover:bg-base-300 transition-colors">
+    <div className="card-body py-4 px-5">
+      <h3 className="font-semibold">Social Feed</h3>
+      <p className="text-sm text-base-content/60">Full combined demo</p>
+    </div>
+  </a>
+</div>
+
+## Return Values (Hook)
+
+```tsx
+const {
+  virtualizer,      // TanStack Virtual instance
+  virtualItems,     // Currently visible virtual items
+  totalSize,        // Total scrollable height (px)
+  containerRef,     // Ref for scroll container
+  handleScroll,     // Scroll handler (for infinite scroll)
+  handleKeyDown,    // Keyboard handler
+  setFocusedItem,   // (index) => void
+  focusedIndex,     // Current focused index
+  scrollToIndex,    // (index) => void
+  scrollToTop,      // () => void
+  measureElement,   // Ref callback for dynamic sizing
+  data,             // The data array
+} = useVirtualList(options);
+```

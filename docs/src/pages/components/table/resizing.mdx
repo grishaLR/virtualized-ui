@@ -1,0 +1,46 @@
+---
+layout: ../../../layouts/DocsLayout.astro
+title: "VirtualTable: Column Resizing"
+---
+
+import { TableResizingDemo } from '../../../components/table/TableResizingDemo';
+
+# Column Resizing
+
+<p className="text-lg text-base-content/70 !mt-2 mb-4">
+  Drag column borders to resize columns interactively.
+</p>
+
+<div className="grid grid-cols-1 lg:grid-cols-5 gap-8 my-6 not-prose">
+  <div className="lg:col-span-3">
+    <TableResizingDemo client:load rowCount={100} />
+  </div>
+  <div className="lg:col-span-2 text-sm">
+    <p className="mb-3 text-base-content/70">Enable resizing and add a drag handle to each header:</p>
+```tsx
+const { columnSizing } = useVirtualTable({
+  data,
+  columns,
+  enableColumnResizing: true,
+  columnResizeMode: 'onChange',
+});
+
+// Add resize handle to header:
+<div
+  onMouseDown={header.getResizeHandler()}
+  style={{ cursor: 'col-resize' }}
+/>
+```
+
+    <div className="mt-4 overflow-x-auto">
+      <table className="table-compact">
+        <thead><tr><th>Option</th><th>Type</th><th>Default</th></tr></thead>
+        <tbody>
+          <tr><td><code>enableColumnResizing</code></td><td><code>boolean</code></td><td>false</td></tr>
+          <tr><td><code>columnResizeMode</code></td><td><code>'onChange' | 'onEnd'</code></td><td>'onChange'</td></tr>
+          <tr><td><code>columnSizing</code></td><td><code>ColumnSizingState</code></td><td>—</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,58 @@
+---
+layout: ../../../layouts/DocsLayout.astro
+title: "VirtualList: Social Feed"
+---
+
+import { ListSocialFeedDemo } from '../../../components/list/ListSocialFeedDemo';
+
+# Social Feed
+
+<p className="text-lg text-base-content/70 !mt-2 mb-4">
+  A full combined demo showing infinite scroll with dynamically sized items — like a social media timeline.
+</p>
+
+<div className="grid grid-cols-1 lg:grid-cols-5 gap-8 my-6 not-prose">
+  <div className="lg:col-span-3">
+    <ListSocialFeedDemo client:load />
+  </div>
+  <div className="lg:col-span-2 text-sm">
+    <p className="mb-3 text-base-content/70">
+      Combine infinite scroll with dynamic item heights using <code>measureElement</code>:
+    </p>
+```tsx
+const {
+  virtualItems,
+  totalSize,
+  containerRef,
+  handleScroll,
+  measureElement,
+  data: listData,
+} = useVirtualList({
+  data,
+  getItemId: (item) => item.id,
+  estimatedItemHeight: 140,
+  onScrollToBottom: loadMore,
+  scrollBottomThreshold: 300,
+});
+
+// In render, attach measureElement ref:
+{virtualItems.map((vi) => (
+  <div
+    ref={measureElement}
+    data-index={vi.index}
+    style={{
+      position: 'absolute',
+      transform: `translateY(${vi.start}px)`,
+    }}
+  >
+    <PostCard post={listData[vi.index]} />
+  </div>
+))}
+```
+
+    <p className="mt-4 text-base-content/70">
+      The <code>measureElement</code> ref callback lets the virtualizer
+      measure actual rendered heights, so items can have varying sizes.
+    </p>
+  </div>
+</div>

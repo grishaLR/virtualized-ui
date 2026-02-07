@@ -1,0 +1,50 @@
+---
+layout: ../../../layouts/DocsLayout.astro
+title: "VirtualTable: Row Expansion"
+---
+
+import { TableExpansionDemo } from '../../../components/table/TableExpansionDemo';
+
+# Row Expansion
+
+<p className="text-lg text-base-content/70 !mt-2 mb-4">
+  Expand rows to show additional detail content inline.
+</p>
+
+<div className="grid grid-cols-1 lg:grid-cols-5 gap-8 my-6 not-prose">
+  <div className="lg:col-span-3">
+    <TableExpansionDemo client:load rowCount={50} />
+  </div>
+  <div className="lg:col-span-2 text-sm">
+    <p className="mb-3 text-base-content/70">Rows can expand to reveal additional content:</p>
+```tsx
+const { expanded } = useVirtualTable({
+  data,
+  columns,
+  enableRowExpansion: true,
+  expandedRowHeight: 100,
+  getRowCanExpand: (row) => true,
+});
+
+// Toggle in render:
+<button onClick={() => row.toggleExpanded()}>
+  {row.getIsExpanded() ? '−' : '+'}
+</button>
+
+// Expanded content:
+{row.getIsExpanded() && <ExpandedContent />}
+```
+
+    <div className="mt-4 overflow-x-auto">
+      <table className="table-compact">
+        <thead><tr><th>Option</th><th>Type</th><th>Default</th></tr></thead>
+        <tbody>
+          <tr><td><code>enableRowExpansion</code></td><td><code>boolean</code></td><td>false</td></tr>
+          <tr><td><code>expandedRowHeight</code></td><td><code>number</code></td><td>200</td></tr>
+          <tr><td><code>expanded</code></td><td><code>ExpandedState</code></td><td>—</td></tr>
+          <tr><td><code>onExpandedChange</code></td><td><code>(state) =&gt; void</code></td><td>—</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

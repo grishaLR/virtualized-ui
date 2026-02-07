@@ -1,0 +1,142 @@
+---
+layout: ../../../layouts/DocsLayout.astro
+title: VirtualTable
+---
+
+import { TableBasicDemo } from '../../../components/table/TableBasicDemo';
+
+# VirtualTable
+
+<p className="text-lg text-base-content/70 !mt-2 mb-4">
+  A headless virtualized table hook built on TanStack Table + TanStack Virtual. Render thousands of
+  rows with ease.
+</p>
+
+## Basic Usage
+
+<div className="grid grid-cols-1 lg:grid-cols-5 gap-8 my-6 not-prose">
+  <div className="lg:col-span-3">
+    <TableBasicDemo client:load rowCount={1000} />
+  </div>
+  <div className="lg:col-span-2 text-sm">
+    <p className="mb-3 text-base-content/70">The simplest usage — just pass data and columns:</p>
+```tsx
+const { table, rows, virtualItems, totalSize, containerRef } = useVirtualTable({
+  data,
+  columns,
+  rowHeight: 44,
+});
+```
+    <div className="mt-4 overflow-x-auto">
+      <table className="table-compact">
+        <thead><tr><th>Option</th><th>Type</th><th>Default</th></tr></thead>
+        <tbody>
+          <tr><td><code>data</code></td><td><code>TData[]</code></td><td>required</td></tr>
+          <tr><td><code>columns</code></td><td><code>ColumnDef&lt;TData&gt;[]</code></td><td>required</td></tr>
+          <tr><td><code>rowHeight</code></td><td><code>number</code></td><td>40</td></tr>
+          <tr><td><code>overscan</code></td><td><code>number</code></td><td>5</td></tr>
+          <tr><td><code>getRowId</code></td><td><code>(row) =&gt; string</code></td><td>—</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+## Features
+
+Explore each feature on its own page:
+
+<div className="grid md:grid-cols-2 gap-3 my-6 not-prose">
+  <a href="/components/table/sorting" className="card bg-base-200 hover:bg-base-300 transition-colors">
+    <div className="card-body py-4 px-5">
+      <h3 className="font-semibold">Sorting</h3>
+      <p className="text-sm text-base-content/60">Single & multi-column sorting</p>
+    </div>
+  </a>
+  <a href="/components/table/selection" className="card bg-base-200 hover:bg-base-300 transition-colors">
+    <div className="card-body py-4 px-5">
+      <h3 className="font-semibold">Row Selection</h3>
+      <p className="text-sm text-base-content/60">Checkbox-based row selection</p>
+    </div>
+  </a>
+  <a href="/components/table/expansion" className="card bg-base-200 hover:bg-base-300 transition-colors">
+    <div className="card-body py-4 px-5">
+      <h3 className="font-semibold">Row Expansion</h3>
+      <p className="text-sm text-base-content/60">Expandable rows with detail views</p>
+    </div>
+  </a>
+  <a href="/components/table/keyboard" className="card bg-base-200 hover:bg-base-300 transition-colors">
+    <div className="card-body py-4 px-5">
+      <h3 className="font-semibold">Keyboard Navigation</h3>
+      <p className="text-sm text-base-content/60">Arrow keys, Home/End, Space/Enter</p>
+    </div>
+  </a>
+  <a href="/components/table/infinite-scroll" className="card bg-base-200 hover:bg-base-300 transition-colors">
+    <div className="card-body py-4 px-5">
+      <h3 className="font-semibold">Infinite Scroll</h3>
+      <p className="text-sm text-base-content/60">Load more data on scroll</p>
+    </div>
+  </a>
+  <a href="/components/table/resizing" className="card bg-base-200 hover:bg-base-300 transition-colors">
+    <div className="card-body py-4 px-5">
+      <h3 className="font-semibold">Column Resizing</h3>
+      <p className="text-sm text-base-content/60">Drag column borders to resize</p>
+    </div>
+  </a>
+  <a href="/components/table/reordering" className="card bg-base-200 hover:bg-base-300 transition-colors">
+    <div className="card-body py-4 px-5">
+      <h3 className="font-semibold">Column Reordering</h3>
+      <p className="text-sm text-base-content/60">Drag and drop column reordering</p>
+    </div>
+  </a>
+</div>
+
+## Return Values
+
+```tsx
+const {
+  // Core
+  table,              // TanStack Table instance
+  rows,               // Processed row models
+  virtualizer,        // TanStack Virtual instance
+  virtualItems,       // Currently visible virtual items
+  totalSize,          // Total scrollable height (px)
+  containerRef,       // Ref for scroll container
+
+  // Handlers
+  handleScroll,       // For infinite scroll
+  handleKeyDown,      // For keyboard navigation
+  reorderColumn,      // (fromId, toId) => void
+  setFocusedRow,      // (index) => void
+
+  // State (controlled or internal)
+  rowSelection, sorting, expanded, columnSizing, columnOrder, focusedRowIndex,
+} = useVirtualTable(options);
+```
+
+## Controlled vs Uncontrolled
+
+<div className="grid grid-cols-1 lg:grid-cols-2 gap-6 my-6 not-prose text-sm">
+  <div>
+    <p className="font-medium mb-2">Uncontrolled</p>
+    <p className="text-base-content/70 mb-3">State managed internally:</p>
+```tsx
+const { sorting } = useVirtualTable({
+  enableSorting: true,
+});
+// `sorting` reflects internal state
+```
+  </div>
+  <div>
+    <p className="font-medium mb-2">Controlled</p>
+    <p className="text-base-content/70 mb-3">You own the state:</p>
+```tsx
+const [sorting, setSorting] = useState([]);
+useVirtualTable({
+  enableSorting: true,
+  sorting,
+  onSortingChange: setSorting,
+});
+```
+  </div>
+</div>

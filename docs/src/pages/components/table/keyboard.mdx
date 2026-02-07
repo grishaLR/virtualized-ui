@@ -1,0 +1,52 @@
+---
+layout: ../../../layouts/DocsLayout.astro
+title: "VirtualTable: Keyboard Navigation"
+---
+
+import { TableKeyboardDemo } from '../../../components/table/TableKeyboardDemo';
+
+# Keyboard Navigation
+
+<p className="text-lg text-base-content/70 !mt-2 mb-4">
+  Navigate rows with arrow keys. Select with Space, expand with Enter.
+</p>
+
+<div className="grid grid-cols-1 lg:grid-cols-5 gap-8 my-6 not-prose">
+  <div className="lg:col-span-3">
+    <TableKeyboardDemo client:load rowCount={100} />
+  </div>
+  <div className="lg:col-span-2 text-sm">
+    <p className="mb-3 text-base-content/70">Click the table, then use keyboard to navigate:</p>
+```tsx
+const { focusedRowIndex, handleKeyDown } = useVirtualTable({
+  data,
+  columns,
+  enableKeyboardNavigation: true,
+});
+
+<div
+  ref={containerRef}
+  tabIndex={0}
+  onKeyDown={handleKeyDown}
+>
+```
+
+    <div className="my-3 text-xs space-y-1 text-base-content/70">
+      <div><kbd className="kbd kbd-xs">↑↓</kbd> Move focus</div>
+      <div><kbd className="kbd kbd-xs">Home</kbd> <kbd className="kbd kbd-xs">End</kbd> Jump to first/last</div>
+      <div><kbd className="kbd kbd-xs">Space</kbd> Toggle selection</div>
+      <div><kbd className="kbd kbd-xs">Enter</kbd> Toggle expansion</div>
+    </div>
+
+    <div className="mt-4 overflow-x-auto">
+      <table className="table-compact">
+        <thead><tr><th>Option</th><th>Type</th><th>Default</th></tr></thead>
+        <tbody>
+          <tr><td><code>enableKeyboardNavigation</code></td><td><code>boolean</code></td><td>false</td></tr>
+          <tr><td><code>focusedRowIndex</code></td><td><code>number</code></td><td>—</td></tr>
+          <tr><td><code>onFocusedRowChange</code></td><td><code>(index) =&gt; void</code></td><td>—</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

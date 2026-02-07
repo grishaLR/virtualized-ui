@@ -1,0 +1,42 @@
+---
+layout: ../../../layouts/DocsLayout.astro
+title: "VirtualTable: Column Reordering"
+---
+
+import { TableReorderingDemo } from '../../../components/table/TableReorderingDemo';
+
+# Column Reordering
+
+<p className="text-lg text-base-content/70 !mt-2 mb-4">
+  Drag and drop column headers to reorder columns.
+</p>
+
+<div className="grid grid-cols-1 lg:grid-cols-5 gap-8 my-6 not-prose">
+  <div className="lg:col-span-3">
+    <TableReorderingDemo client:load rowCount={50} />
+  </div>
+  <div className="lg:col-span-2 text-sm">
+    <p className="mb-3 text-base-content/70">Enable reordering and call <code>reorderColumn</code>:</p>
+```tsx
+const { columnOrder, reorderColumn } = useVirtualTable({
+  data,
+  columns,
+  enableColumnReordering: true,
+});
+
+// On drop:
+reorderColumn('sourceId', 'targetId');
+```
+
+    <div className="mt-4 overflow-x-auto">
+      <table className="table-compact">
+        <thead><tr><th>Option</th><th>Type</th><th>Default</th></tr></thead>
+        <tbody>
+          <tr><td><code>enableColumnReordering</code></td><td><code>boolean</code></td><td>false</td></tr>
+          <tr><td><code>columnOrder</code></td><td><code>ColumnOrderState</code></td><td>—</td></tr>
+          <tr><td><code>onColumnOrderChange</code></td><td><code>(state) =&gt; void</code></td><td>—</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,65 @@
+---
+layout: ../../../layouts/DocsLayout.astro
+title: "VirtualTable: Sorting"
+---
+
+import { TableSortingDemo } from '../../../components/table/TableSortingDemo';
+
+# Sorting
+
+<p className="text-lg text-base-content/70 !mt-2 mb-4">
+  Click column headers to sort. Hold Shift for multi-column sorting.
+</p>
+
+## Single Column
+
+<div className="grid grid-cols-1 lg:grid-cols-5 gap-8 my-6 not-prose">
+  <div className="lg:col-span-3">
+    <TableSortingDemo client:load rowCount={100} />
+  </div>
+  <div className="lg:col-span-2 text-sm">
+    <p className="mb-3 text-base-content/70">Enable sorting with a single prop:</p>
+```tsx
+const { sorting } = useVirtualTable({
+  data,
+  columns,
+  enableSorting: true,
+});
+```
+  </div>
+</div>
+
+## Multi-Column
+
+<div className="grid grid-cols-1 lg:grid-cols-5 gap-8 my-6 not-prose">
+  <div className="lg:col-span-3">
+    <TableSortingDemo client:load rowCount={100} enableMultiSort />
+  </div>
+  <div className="lg:col-span-2 text-sm">
+    <p className="mb-3 text-base-content/70">Hold Shift and click another header to add a secondary sort:</p>
+```tsx
+const { sorting } = useVirtualTable({
+  data,
+  columns,
+  enableSorting: true,
+  enableMultiSort: true,
+});
+
+// Controlled:
+const [sorting, setSorting] = useState([]);
+useVirtualTable({
+  sorting,
+  onSortingChange: setSorting,
+});
+```
+  </div>
+</div>
+
+## Options
+
+| Option | Type | Default |
+|---|---|---|
+| `enableSorting` | `boolean` | `false` |
+| `enableMultiSort` | `boolean` | `false` |
+| `sorting` | `SortingState` | — |
+| `onSortingChange` | `(state) => void` | — |

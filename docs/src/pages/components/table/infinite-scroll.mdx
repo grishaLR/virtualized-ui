@@ -1,0 +1,45 @@
+---
+layout: ../../../layouts/DocsLayout.astro
+title: "VirtualTable: Infinite Scroll"
+---
+
+import { TableInfiniteScrollDemo } from '../../../components/table/TableInfiniteScrollDemo';
+
+# Infinite Scroll
+
+<p className="text-lg text-base-content/70 !mt-2 mb-4">
+  Automatically load more data as the user scrolls near the bottom.
+</p>
+
+<div className="grid grid-cols-1 lg:grid-cols-5 gap-8 my-6 not-prose">
+  <div className="lg:col-span-3">
+    <TableInfiniteScrollDemo client:load />
+  </div>
+  <div className="lg:col-span-2 text-sm">
+    <p className="mb-3 text-base-content/70">Trigger a callback when scrolling near the bottom:</p>
+```tsx
+const { handleScroll } = useVirtualTable({
+  data,
+  columns,
+  onScrollToBottom: () => {
+    if (!isFetching && hasNextPage) {
+      fetchNextPage();
+    }
+  },
+  scrollBottomThreshold: 500,
+});
+
+<div ref={containerRef} onScroll={handleScroll}>
+```
+
+    <div className="mt-4 overflow-x-auto">
+      <table className="table-compact">
+        <thead><tr><th>Option</th><th>Type</th><th>Default</th></tr></thead>
+        <tbody>
+          <tr><td><code>onScrollToBottom</code></td><td><code>() =&gt; void</code></td><td>—</td></tr>
+          <tr><td><code>scrollBottomThreshold</code></td><td><code>number</code></td><td>100</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

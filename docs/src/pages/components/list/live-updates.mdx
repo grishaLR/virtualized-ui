@@ -1,0 +1,47 @@
+---
+layout: ../../../layouts/DocsLayout.astro
+title: "VirtualList: Live Updates"
+---
+
+import { ListLiveUpdatesDemo } from '../../../components/list/ListLiveUpdatesDemo';
+
+# Live Updates
+
+<p className="text-lg text-base-content/70 !mt-2 mb-4">
+  Prepend new items to the top with automatic scroll anchoring — the viewport stays in place while new content arrives.
+</p>
+
+<div className="grid grid-cols-1 lg:grid-cols-5 gap-8 my-6 not-prose">
+  <div className="lg:col-span-3">
+    <ListLiveUpdatesDemo client:load />
+  </div>
+  <div className="lg:col-span-2 text-sm">
+    <p className="mb-3 text-base-content/70">
+      Just prepend to the data array. The hook detects the ID change
+      and adjusts scroll position automatically:
+    </p>
+```tsx
+const [data, setData] = useState(initialItems);
+
+// Prepend a new item:
+setData((prev) => [newItem, ...prev]);
+
+const { virtualItems, containerRef } = useVirtualList({
+  data,
+  getItemId: (item) => item.id,
+  estimatedItemHeight: 72,
+});
+```
+
+    <p className="mt-4 text-base-content/70">
+      The hook tracks the first item's ID. When it changes and the data
+      grows, it adjusts <code>scrollTop</code> so the previously visible
+      items remain in place.
+    </p>
+
+    <p className="mt-3 text-base-content/70">
+      Use the buttons in the demo to add messages manually or enable
+      auto-add mode to simulate a live feed.
+    </p>
+  </div>
+</div>

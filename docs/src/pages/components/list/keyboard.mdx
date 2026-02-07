@@ -1,0 +1,50 @@
+---
+layout: ../../../layouts/DocsLayout.astro
+title: "VirtualList: Keyboard Navigation"
+---
+
+import { ListKeyboardDemo } from '../../../components/list/ListKeyboardDemo';
+
+# Keyboard Navigation
+
+<p className="text-lg text-base-content/70 !mt-2 mb-4">
+  Navigate list items with arrow keys. Focus state is tracked and scrolled into view.
+</p>
+
+<div className="grid grid-cols-1 lg:grid-cols-5 gap-8 my-6 not-prose">
+  <div className="lg:col-span-3">
+    <ListKeyboardDemo client:load itemCount={200} />
+  </div>
+  <div className="lg:col-span-2 text-sm">
+    <p className="mb-3 text-base-content/70">Enable keyboard navigation and wire up the handler:</p>
+```tsx
+const { focusedIndex, handleKeyDown } = useVirtualList({
+  data,
+  getItemId: (item) => item.id,
+  enableKeyboardNavigation: true,
+});
+
+<div
+  ref={containerRef}
+  tabIndex={0}
+  onKeyDown={handleKeyDown}
+>
+```
+
+    <div className="my-3 text-xs space-y-1 text-base-content/70">
+      <div><kbd className="kbd kbd-xs">↑↓</kbd> Move focus</div>
+      <div><kbd className="kbd kbd-xs">Home</kbd> <kbd className="kbd kbd-xs">End</kbd> Jump to first/last</div>
+    </div>
+
+    <div className="mt-4 overflow-x-auto">
+      <table className="table-compact">
+        <thead><tr><th>Option</th><th>Type</th><th>Default</th></tr></thead>
+        <tbody>
+          <tr><td><code>enableKeyboardNavigation</code></td><td><code>boolean</code></td><td>false</td></tr>
+          <tr><td><code>focusedIndex</code></td><td><code>number</code></td><td>—</td></tr>
+          <tr><td><code>onFocusedIndexChange</code></td><td><code>(index) =&gt; void</code></td><td>—</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

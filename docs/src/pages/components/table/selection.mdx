@@ -1,0 +1,51 @@
+---
+layout: ../../../layouts/DocsLayout.astro
+title: "VirtualTable: Row Selection"
+---
+
+import { TableSelectionDemo } from '../../../components/table/TableSelectionDemo';
+
+# Row Selection
+
+<p className="text-lg text-base-content/70 !mt-2 mb-4">
+  Select rows with checkboxes. Supports select-all and controlled state.
+</p>
+
+<div className="grid grid-cols-1 lg:grid-cols-5 gap-8 my-6 not-prose">
+  <div className="lg:col-span-3">
+    <TableSelectionDemo client:load rowCount={100} />
+  </div>
+  <div className="lg:col-span-2 text-sm">
+    <p className="mb-3 text-base-content/70">Add a selection column with checkboxes:</p>
+```tsx
+const { rowSelection } = useVirtualTable({
+  data,
+  columns,
+  enableRowSelection: true,
+  getRowId: (row) => row.id,
+});
+
+// Selection column:
+{
+  id: 'select',
+  header: ({ table }) => (
+    <Checkbox checked={table.getIsAllRowsSelected()} />
+  ),
+  cell: ({ row }) => (
+    <Checkbox checked={row.getIsSelected()} />
+  ),
+}
+```
+
+    <div className="mt-4 overflow-x-auto">
+      <table className="table-compact">
+        <thead><tr><th>Option</th><th>Type</th><th>Default</th></tr></thead>
+        <tbody>
+          <tr><td><code>enableRowSelection</code></td><td><code>boolean</code></td><td>false</td></tr>
+          <tr><td><code>rowSelection</code></td><td><code>RowSelectionState</code></td><td>—</td></tr>
+          <tr><td><code>onRowSelectionChange</code></td><td><code>(state) =&gt; void</code></td><td>—</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

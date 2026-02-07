@@ -16,13 +16,13 @@ import { TableDemo } from '../components/TableDemo'
     </div>
 
     <p>
-      Primitives for tables and selects that handle the hard parts—virtualization,
+      Primitives for tables, lists, and selects that handle the hard parts—virtualization,
       keyboard navigation, state management—while staying out of your way on the UI.
     </p>
 
     <h2>Features</h2>
 
-    <div class="grid md:grid-cols-2 gap-4 not-prose my-6">
+    <div class="grid md:grid-cols-3 gap-4 not-prose my-6">
       <div class="card bg-base-200">
         <div class="card-body">
           <h3 class="card-title text-lg">VirtualTable</h3>
@@ -34,6 +34,27 @@ import { TableDemo } from '../components/TableDemo'
             <li>Keyboard navigation</li>
             <li>Infinite scroll</li>
           </ul>
+          <div class="card-actions mt-3">
+            <a href="/components/table" class="btn btn-sm btn-primary">View Table Docs</a>
+          </div>
+        </div>
+      </div>
+      <div class="card bg-base-200">
+        <div class="card-body">
+          <h3 class="card-title text-lg">
+            VirtualList
+            <span class="badge badge-sm badge-primary">new</span>
+          </h3>
+          <ul class="text-sm space-y-1 text-base-content/80">
+            <li>Virtualized flat lists</li>
+            <li>Dynamic item heights</li>
+            <li>Infinite scroll</li>
+            <li>Keyboard navigation</li>
+            <li>Live prepend + scroll anchoring</li>
+          </ul>
+          <div class="card-actions mt-3">
+            <a href="/components/list" class="btn btn-sm btn-primary">View List Docs</a>
+          </div>
         </div>
       </div>
       <div class="card bg-base-200">
@@ -60,6 +81,7 @@ import { TableDemo } from '../components/TableDemo'
     <p>
       <a href="/getting-started" class="btn bg-blue-600 hover:bg-blue-700 border-none" style="color: white;">Get Started</a>
       <a href="/components/table" class="btn btn-ghost ml-2">View Table Docs</a>
+      <a href="/components/list" class="btn btn-ghost ml-2">View List Docs</a>
     </p>
   </div>
 </DocsLayout>

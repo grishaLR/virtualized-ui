@@ -28,6 +28,8 @@ npm install react react-dom
 
 ## Basic Usage
 
+### VirtualTable
+
 The library exports a `useVirtualTable` hook that combines TanStack Table with TanStack Virtual.
 
 ```tsx
@@ -102,16 +104,67 @@ function MyTable({ data }: { data: Person[] }) {
 }
 ```
 
+### VirtualList
+
+For flat lists, use the `useVirtualList` hook or the `VirtualList` component:
+
+```tsx
+import { useVirtualList } from 'virtualized-ui';
+
+interface Item {
+  id: string;
+  title: string;
+}
+
+function MyList({ items }: { items: Item[] }) {
+  const {
+    virtualItems,
+    totalSize,
+    containerRef,
+    measureElement,
+    data,
+  } = useVirtualList({
+    data: items,
+    getItemId: (item) => item.id,
+    estimatedItemHeight: 60,
+  });
+
+  return (
+    <div ref={containerRef} style={{ height: 400, overflow: 'auto' }}>
+      <div style={{ height: totalSize, position: 'relative' }}>
+        {virtualItems.map((vi) => (
+          <div
+            key={vi.key}
+            ref={measureElement}
+            data-index={vi.index}
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              transform: `translateY(${vi.start}px)`,
+            }}
+          >
+            {data[vi.index].title}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+```
+
 ## Headless Design
 
 virtualized-ui is headless—it manages state and virtualization, not styling. You bring your own CSS, Tailwind, or UI library.
 
 This gives you full control over the look and feel while the library handles:
 
-- **Virtualization** — Only renders visible rows
+- **Virtualization** — Only renders visible rows/items
 - **State management** — Sorting, selection, expansion
 - **Keyboard navigation** — Arrow keys, Home/End, Space/Enter
 
 ## Next Steps
 
-- [VirtualTable API](/components/table) — Full options and examples
+- [VirtualTable API](/components/table) — Full table options and examples
+- [VirtualList API](/components/list) — Full list options and examples
