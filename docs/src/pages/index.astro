@@ -1,6 +1,5 @@
 ---
 import DocsLayout from '../layouts/DocsLayout.astro'
-import { TableDemo } from '../components/TableDemo'
 ---
 
 <DocsLayout title="Home">
@@ -9,11 +8,6 @@ import { TableDemo } from '../components/TableDemo'
     <p class="text-xl text-base-content/70 !mt-2">
       Headless virtualized components for React.
     </p>
-
-    <div class="my-10 p-6 bg-base-200 rounded-xl not-prose">
-      <p class="text-sm text-base-content/60 mb-4">1,000 rows rendered instantly</p>
-      <TableDemo client:load rowCount={1000} enableSorting />
-    </div>
 
     <p>
       Primitives for tables, lists, and selects that handle the hard parts—virtualization,
@@ -35,7 +29,7 @@ import { TableDemo } from '../components/TableDemo'
             <li>Infinite scroll</li>
           </ul>
           <div class="card-actions mt-3">
-            <a href="/components/table" class="btn btn-sm btn-primary">View Table Docs</a>
+            <a href="/components/table" class="btn btn-sm btn-primary" style="color: white;">View Table Docs</a>
           </div>
         </div>
       </div>
@@ -53,7 +47,7 @@ import { TableDemo } from '../components/TableDemo'
             <li>Live prepend + scroll anchoring</li>
           </ul>
           <div class="card-actions mt-3">
-            <a href="/components/list" class="btn btn-sm btn-primary">View List Docs</a>
+            <a href="/components/list" class="btn btn-sm btn-primary" style="color: white;">View List Docs</a>
           </div>
         </div>
       </div>
@@ -61,15 +55,18 @@ import { TableDemo } from '../components/TableDemo'
         <div class="card-body">
           <h3 class="card-title text-lg">
             VirtualSelect
-            <span class="badge badge-sm badge-ghost">coming soon</span>
+            <span class="badge badge-sm badge-primary">new</span>
           </h3>
-          <ul class="text-sm space-y-1 text-base-content/50">
-            <li>Virtualized options</li>
+          <ul class="text-sm space-y-1 text-base-content/80">
+            <li>Single & multi select</li>
             <li>Async search with debounce</li>
-            <li>Grouping & creatable</li>
-            <li>Custom option renderer</li>
+            <li>Grouped options & cascade sub-menus</li>
+            <li>Component-slot customization</li>
             <li>Keyboard navigation</li>
           </ul>
+          <div class="card-actions mt-3">
+            <a href="/components/select" class="btn btn-sm btn-primary" style="color: white;">View Select Docs</a>
+          </div>
         </div>
       </div>
     </div>
@@ -80,8 +77,6 @@ import { TableDemo } from '../components/TableDemo'
 
     <p>
       <a href="/getting-started" class="btn bg-blue-600 hover:bg-blue-700 border-none" style="color: white;">Get Started</a>
-      <a href="/components/table" class="btn btn-ghost ml-2">View Table Docs</a>
-      <a href="/components/list" class="btn btn-ghost ml-2">View List Docs</a>
     </p>
   </div>
 </DocsLayout>
