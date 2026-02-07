@@ -5,6 +5,14 @@ export type {
   VirtualTableRenderProps,
 } from './VirtualTable';
 
+export { VirtualList, useVirtualList } from './VirtualList';
+export type {
+  VirtualListProps,
+  VirtualListRenderItemProps,
+  UseVirtualListOptions,
+  UseVirtualListReturn,
+} from './VirtualList';
+
 export { createColumnHelper } from '@tanstack/react-table';
 export type {
   ColumnDef,
