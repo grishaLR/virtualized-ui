@@ -1,6 +1,6 @@
 # virtualized-ui
 
-Headless virtualized table primitives for React. Built on [TanStack Table](https://tanstack.com/table) and [TanStack Virtual](https://tanstack.com/virtual).
+Headless virtualized table and list primitives for React. Built on [TanStack Table](https://tanstack.com/table) and [TanStack Virtual](https://tanstack.com/virtual).
 
 ## Installation
 
@@ -16,17 +16,17 @@ yarn add virtualized-ui
 
 ## Features
 
-- **Virtualization** - Efficiently render thousands of rows
-- **Sorting** - Single and multi-column sorting
-- **Row Selection** - Checkbox or click-based selection
-- **Row Expansion** - Expandable rows with variable heights
-- **Column Resizing** - Drag to resize columns
-- **Column Reordering** - Drag and drop columns
+- **Virtualization** - Efficiently render thousands of rows/items
+- **Headless** - You control the markup and styles
+- **Tables** - Sorting, selection, expansion, resizing, reordering
+- **Lists** - Dynamic heights, keyboard nav, scroll anchoring
 - **Keyboard Navigation** - Arrow keys, Home/End, Space/Enter
 - **Infinite Scroll** - Load more data on scroll
 - **Controlled & Uncontrolled** - Flexible state management
 
 ## Quick Start
+
+### VirtualTable
 
 ```tsx
 import { useVirtualTable } from 'virtualized-ui';
@@ -79,6 +79,53 @@ function MyTable({ data }: { data: Person[] }) {
             </div>
           );
         })}
+      </div>
+    </div>
+  );
+}
+```
+
+### VirtualList
+
+```tsx
+import { useVirtualList } from 'virtualized-ui';
+
+interface Item {
+  id: string;
+  title: string;
+}
+
+function MyList({ items }: { items: Item[] }) {
+  const {
+    virtualItems,
+    totalSize,
+    containerRef,
+    measureElement,
+    data,
+  } = useVirtualList({
+    data: items,
+    getItemId: (item) => item.id,
+    estimatedItemHeight: 60,
+  });
+
+  return (
+    <div ref={containerRef} style={{ height: 400, overflow: 'auto' }}>
+      <div style={{ height: totalSize, position: 'relative' }}>
+        {virtualItems.map((vi) => (
+          <div
+            key={vi.key}
+            ref={measureElement}
+            data-index={vi.index}
+            style={{
+              position: 'absolute',
+              top: 0,
+              width: '100%',
+              transform: `translateY(${vi.start}px)`,
+            }}
+          >
+            {data[vi.index].title}
+          </div>
+        ))}
       </div>
     </div>
   );
@@ -139,53 +186,45 @@ The main hook that combines TanStack Table with TanStack Virtual.
 | `columnOrder` | `ColumnOrderState` | Current column order |
 | `focusedRowIndex` | `number` | Currently focused row |
 
-## Examples
+### `useVirtualList<TData>(options)`
 
-### With Row Expansion
+A hook for virtualized flat lists with dynamic item heights and scroll anchoring.
 
-```tsx
-const { table, rows, virtualItems, totalSize, containerRef } = useVirtualTable({
-  data,
-  columns,
-  enableRowExpansion: true,
-  rowHeight: 52,
-  expandedRowHeight: 200,
-});
-```
+#### Options
 
-### With Infinite Scroll
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `data` | `TData[]` | required | The data array |
+| `getItemId` | `(item, index) => string` | required | Stable unique ID per item |
+| `estimatedItemHeight` | `number` | `100` | Estimated height per item |
+| `overscan` | `number` | `5` | Items to render outside viewport |
+| `gap` | `number` | `0` | Gap between items in pixels |
+| `enableKeyboardNavigation` | `boolean` | `false` | Enable keyboard navigation |
+| `focusedIndex` | `number` | - | Controlled focused index |
+| `onFocusedIndexChange` | `(index) => void` | - | Focus change callback |
+| `onScrollToBottom` | `() => void` | - | Called when scrolled near bottom |
+| `scrollBottomThreshold` | `number` | `100` | Pixels from bottom to trigger callback |
 
-```tsx
-const { containerRef, handleScroll } = useVirtualTable({
-  data,
-  columns,
-  onScrollToBottom: () => fetchNextPage(),
-  scrollBottomThreshold: 500,
-});
+#### Returns
 
-return (
-  <div ref={containerRef} onScroll={handleScroll} style={{ height: 400, overflow: 'auto' }}>
-    {/* ... */}
-  </div>
-);
-```
+| Property | Type | Description |
+|----------|------|-------------|
+| `virtualizer` | `Virtualizer` | TanStack Virtual instance |
+| `virtualItems` | `VirtualItem[]` | Currently visible virtual items |
+| `totalSize` | `number` | Total scrollable height |
+| `containerRef` | `RefObject<HTMLDivElement>` | Ref for scroll container |
+| `handleScroll` | `() => void` | Scroll handler for infinite scroll |
+| `handleKeyDown` | `(e) => void` | Keyboard event handler |
+| `setFocusedItem` | `(index) => void` | Set focused item index |
+| `focusedIndex` | `number` | Currently focused item |
+| `scrollToIndex` | `(index) => void` | Scroll to specific index |
+| `scrollToTop` | `() => void` | Scroll to top |
+| `measureElement` | `(node) => void` | Ref callback for dynamic sizing |
+| `data` | `TData[]` | The data array |
 
-### With Sorting
+## Documentation
 
-```tsx
-const { table, sorting } = useVirtualTable({
-  data,
-  columns,
-  enableSorting: true,
-  enableMultiSort: true,
-});
-
-// In header:
-<th onClick={header.column.getToggleSortingHandler()}>
-  {header.column.columnDef.header}
-  {header.column.getIsSorted() === 'asc' ? ' ↑' : header.column.getIsSorted() === 'desc' ? ' ↓' : ''}
-</th>
-```
+Full documentation and interactive demos at [virtualized-ui.dev](https://virtualized-ui.dev).
 
 ## License
 
