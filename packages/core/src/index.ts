@@ -13,6 +13,31 @@ export type {
   UseVirtualListReturn,
 } from './VirtualList';
 
+export { VirtualSelect, useVirtualSelect } from './VirtualSelect';
+export type {
+  VirtualSelectProps,
+  UseVirtualSelectOptions,
+  UseVirtualSelectReturn,
+  VirtualSelectComponents,
+  OptionGroup,
+  OptionsOrGroups,
+  AsyncConfig,
+  CascadeConfig,
+  FlattenedItem,
+  SubMenuState,
+  TriggerSlotProps,
+  MenuListSlotProps,
+  OptionSlotProps,
+  GroupHeaderSlotProps,
+  TagSlotProps,
+  NoOptionsSlotProps,
+  LoadingSlotProps,
+  SubMenuSlotProps,
+  ClearIndicatorSlotProps,
+  DropdownIndicatorSlotProps,
+  InputSlotProps,
+} from './VirtualSelect';
+
 export { createColumnHelper } from '@tanstack/react-table';
 export type {
   ColumnDef,

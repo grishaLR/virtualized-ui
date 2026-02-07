@@ -1,0 +1,25 @@
+export { VirtualSelect } from './VirtualSelect';
+export { useVirtualSelect } from './useVirtualSelect';
+export type {
+  VirtualSelectProps,
+  UseVirtualSelectOptions,
+  UseVirtualSelectReturn,
+  VirtualSelectComponents,
+  OptionGroup,
+  OptionsOrGroups,
+  AsyncConfig,
+  CascadeConfig,
+  FlattenedItem,
+  SubMenuState,
+  TriggerSlotProps,
+  MenuListSlotProps,
+  OptionSlotProps,
+  GroupHeaderSlotProps,
+  TagSlotProps,
+  NoOptionsSlotProps,
+  LoadingSlotProps,
+  SubMenuSlotProps,
+  ClearIndicatorSlotProps,
+  DropdownIndicatorSlotProps,
+  InputSlotProps,
+} from './types';
