@@ -635,7 +635,7 @@ export const HookOnly: Story = {
         </p>
         <div style={{ position: 'relative' }} onKeyDown={select.handleKeyDown}>
           <button
-            ref={select.triggerRef}
+            ref={select.triggerRef as React.RefObject<HTMLButtonElement>}
             onClick={select.toggle}
             className="hook-trigger"
             {...select.getTriggerProps()}
@@ -648,7 +648,7 @@ export const HookOnly: Story = {
           {select.isOpen && (
             <div className="hook-menu" style={{ maxHeight: 300 }}>
               <input
-                ref={select.inputRef}
+                ref={select.inputRef as React.RefObject<HTMLInputElement>}
                 className="hook-input"
                 value={select.searchValue}
                 onChange={(e) => select.handleSearchInput(e.target.value)}
@@ -656,7 +656,7 @@ export const HookOnly: Story = {
                 {...select.getInputProps()}
               />
               <div
-                ref={select.menuRef}
+                ref={select.menuRef as React.RefObject<HTMLDivElement>}
                 style={{ maxHeight: 250, overflow: 'auto', position: 'relative' }}
                 {...select.getMenuProps()}
               >
