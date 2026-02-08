@@ -117,8 +117,8 @@ importers:
         specifier: ^3.4.0
         version: 3.4.19(yaml@2.8.2)
       virtualized-ui:
-        specifier: ^0.4.0
-        version: 0.4.0(@tanstack/react-table@8.21.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@tanstack/react-virtual@3.13.18(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: ^0.4.1
+        version: 0.4.1(@tanstack/react-table@8.21.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@tanstack/react-virtual@3.13.18(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
 
   packages/core:
     dependencies:
@@ -4130,8 +4130,8 @@ packages:
   vfile@6.0.3:
     resolution: {integrity: sha512-KzIbH/9tXat2u30jf+smMwFCsno4wHVdNmzFyL+T/L3UGqqk6JKfVqOFOZEpZSHADH1k40ab6NUIXZq422ov3Q==}
 
-  virtualized-ui@0.4.0:
-    resolution: {integrity: sha512-gS4rIE3KMHtduwVTQ8kL/4An8LKtJT2ySgbzFasf4wIMiWcaEBoeCpsdPugnkZpNC4vP0nmfIWUz5rwFNvbqBA==}
+  virtualized-ui@0.4.1:
+    resolution: {integrity: sha512-P/gYG7zWSenjeGJLg5hDyJ80zAkFYXqarusO+HH+t5tw66rqOu06ZGV4fdrkRtccZbIytPvAzoYJMBN2nrEpcg==}
     peerDependencies:
       '@tanstack/react-table': ^8.20.0
       '@tanstack/react-virtual': ^3.10.0
@@ -9006,7 +9006,7 @@ snapshots:
       '@types/unist': 3.0.3
       vfile-message: 4.0.3
 
-  virtualized-ui@0.4.0(@tanstack/react-table@8.21.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@tanstack/react-virtual@3.13.18(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+  virtualized-ui@0.4.1(@tanstack/react-table@8.21.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@tanstack/react-virtual@3.13.18(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
       '@tanstack/react-table': 8.21.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@tanstack/react-virtual': 3.13.18(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
