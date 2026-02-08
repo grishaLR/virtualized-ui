@@ -10,6 +10,7 @@ export function VirtualTable<TData>(props: VirtualTableProps<TData>) {
     height = DEFAULT_HEIGHT,
     stickyHeader = true,
     renderExpandedRow,
+    ariaLabel,
     className,
     style,
     ...tableOptions
@@ -43,6 +44,7 @@ export function VirtualTable<TData>(props: VirtualTableProps<TData>) {
     <div
       ref={containerRef}
       role="grid"
+      aria-label={ariaLabel}
       aria-rowcount={rows.length}
       className={className}
       tabIndex={enableKeyboardNavigation ? 0 : undefined}

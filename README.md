@@ -25,7 +25,8 @@ yarn add virtualized-ui
 ### VirtualTable
 
 ```tsx
-import { VirtualTable, createColumnHelper } from 'virtualized-ui';
+import { VirtualTable } from 'virtualized-ui';
+import { createColumnHelper } from '@tanstack/react-table';
 
 interface Person {
   id: number;
@@ -162,7 +163,7 @@ function MyCustomList() {
 | `data` | `TData[]` | required | Array of data items |
 | `columns` | `ColumnDef[]` | required | TanStack Table column definitions |
 | `height` | `number \| string` | `400` | Container height |
-| `rowHeight` | `number` | `40` | Estimated row height for virtualization |
+| `estimatedRowHeight` | `number` | `40` | Estimated row height for virtualization |
 | `overscan` | `number` | `5` | Rows to render outside visible area |
 | `enableSorting` | `boolean` | `false` | Enable column sorting |
 | `enableMultiSort` | `boolean` | `false` | Enable multi-column sorting |

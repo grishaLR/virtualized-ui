@@ -253,6 +253,7 @@ export interface UseVirtualSelectReturn<TOption> {
   selectedValues: string[];
   selectedOptions: TOption[];
   isLoading: boolean;
+  loadError: Error | null;
 
   // Sub-menus
   subMenus: SubMenuState<TOption>[];

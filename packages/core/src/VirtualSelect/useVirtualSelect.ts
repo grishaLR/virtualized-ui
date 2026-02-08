@@ -195,7 +195,7 @@ export function useVirtualSelect<TOption>(
   );
 
   // ---- sub-hooks ----
-  const { asyncOptions, isLoading, loadAsync, debouncedLoadAsync } =
+  const { asyncOptions, isLoading, loadError, loadAsync, debouncedLoadAsync } =
     useSelectAsync<TOption>(asyncConfig);
 
   const { subMenus, setSubMenus, openSubMenu, closeSubMenus } = useSelectCascade<TOption>(
@@ -501,6 +501,7 @@ export function useVirtualSelect<TOption>(
     selectedValues,
     selectedOptions,
     isLoading,
+    loadError,
 
     // Sub-menus
     subMenus,

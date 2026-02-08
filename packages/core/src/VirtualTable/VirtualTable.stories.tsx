@@ -554,7 +554,7 @@ export const WithMultiSort: Story = {
     return (
       <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column' }}>
         <div style={{ marginBottom: 8 }}>
-          <strong>Multi-sort:</strong> Hold Shift and click columns to add sort levels.
+          <strong>Multi-sort:</strong> Click columns to add sort levels.
           {sorting.length > 0 && (
             <span style={{ marginLeft: 8 }}>
               Sorted by: {sorting.map((s) => `${s.id} (${s.desc ? 'desc' : 'asc'})`).join(' → ')}

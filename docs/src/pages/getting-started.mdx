@@ -20,10 +20,28 @@ yarn add virtualized-ui
 
 ## Peer Dependencies
 
-virtualized-ui requires React 18+:
+virtualized-ui requires the following peer dependencies:
 
 ```bash
-npm install react react-dom
+npm install react react-dom @tanstack/react-table @tanstack/react-virtual
+```
+
+> `@tanstack/react-table` is only needed if you use VirtualTable. `@tanstack/react-virtual` is used internally by all components.
+
+## Subpath Imports
+
+You can import each component individually for smaller bundles:
+
+```tsx
+import { useVirtualTable } from 'virtualized-ui/table';
+import { useVirtualList } from 'virtualized-ui/list';
+import { useVirtualSelect } from 'virtualized-ui/select';
+```
+
+Or import everything from the main entry:
+
+```tsx
+import { VirtualTable, VirtualList, VirtualSelect } from 'virtualized-ui';
 ```
 
 ## Basic Usage
@@ -168,3 +186,4 @@ This gives you full control over the look and feel while the library handles:
 
 - [VirtualTable API](/components/table) — Full table options and examples
 - [VirtualList API](/components/list) — Full list options and examples
+- [VirtualSelect API](/components/select) — Full select options and examples

@@ -53,17 +53,23 @@ export function useSelectCascade<TOption>(
           },
         ]);
 
-        result.then((children) => {
-          // Index children
-          for (const child of children) {
-            optionsByValueRef.current!.set(getOptionValue(child), child);
+        result.then(
+          (children) => {
+            // Index children
+            for (const child of children) {
+              optionsByValueRef.current!.set(getOptionValue(child), child);
+            }
+            setSubMenus((prev) =>
+              prev.map((sm) =>
+                sm.parentValue === parentValue ? { ...sm, options: children, isLoading: false } : sm
+              )
+            );
+          },
+          () => {
+            // On failure, remove the loading sub-menu
+            setSubMenus((prev) => prev.filter((sm) => sm.parentValue !== parentValue));
           }
-          setSubMenus((prev) =>
-            prev.map((sm) =>
-              sm.parentValue === parentValue ? { ...sm, options: children, isLoading: false } : sm
-            )
-          );
-        });
+        );
       } else {
         // Sync children — trim any at the same depth or deeper, then append
         for (const child of result) {

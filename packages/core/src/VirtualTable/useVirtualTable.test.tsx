@@ -395,6 +395,94 @@ describe('useVirtualTable', () => {
     });
   });
 
+  describe('multi-sort', () => {
+    it('multi-sort via toggleSorting(desc, multi)', () => {
+      const { result } = renderHook(() =>
+        useVirtualTable({
+          data: testData,
+          columns: testColumns,
+          enableSorting: true,
+          enableMultiSort: true,
+        })
+      );
+
+      expect(result.current.sorting).toEqual([]);
+
+      // Sort by name
+      act(() => {
+        result.current.table.getColumn('name')?.toggleSorting(false, false);
+      });
+
+      expect(result.current.sorting).toEqual([{ id: 'name', desc: false }]);
+
+      // Multi-sort: add age
+      act(() => {
+        result.current.table.getColumn('age')?.toggleSorting(false, true);
+      });
+
+      expect(result.current.sorting).toEqual([
+        { id: 'name', desc: false },
+        { id: 'age', desc: false },
+      ]);
+    });
+
+    it('multi-sort via getToggleSortingHandler without shift (auto multi-sort)', () => {
+      const { result } = renderHook(() =>
+        useVirtualTable({
+          data: testData,
+          columns: testColumns,
+          enableSorting: true,
+          enableMultiSort: true,
+        })
+      );
+
+      // Click name column header (no shift needed)
+      act(() => {
+        const handler = result.current.table.getColumn('name')?.getToggleSortingHandler();
+        handler?.({} as any);
+      });
+
+      expect(result.current.sorting).toEqual([{ id: 'name', desc: false }]);
+
+      // Click age column header (no shift — still adds to sort)
+      act(() => {
+        const handler = result.current.table.getColumn('age')?.getToggleSortingHandler();
+        handler?.({} as any);
+      });
+
+      expect(result.current.sorting).toHaveLength(2);
+      expect(result.current.sorting[0]).toEqual({ id: 'name', desc: false });
+      expect(result.current.sorting[1].id).toBe('age');
+    });
+
+    it('controlled multi-sort passes correct values', () => {
+      const onSortingChange = vi.fn();
+      const { result } = renderHook(
+        ({ sorting }) =>
+          useVirtualTable({
+            data: testData,
+            columns: testColumns,
+            enableSorting: true,
+            enableMultiSort: true,
+            sorting,
+            onSortingChange,
+          }),
+        { initialProps: { sorting: [{ id: 'name' as const, desc: false }] } }
+      );
+
+      // Click age (no shift needed)
+      act(() => {
+        const handler = result.current.table.getColumn('age')?.getToggleSortingHandler();
+        handler?.({} as any);
+      });
+
+      const calledWith = onSortingChange.mock.calls[0][0];
+      expect(calledWith).toHaveLength(2);
+      expect(calledWith[0]).toEqual({ id: 'name', desc: false });
+      expect(calledWith[1].id).toBe('age');
+    });
+  });
+
   describe('edge cases', () => {
     it('handles empty data array', () => {
       const { result } = renderHook(() =>

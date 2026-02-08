@@ -20,6 +20,6 @@
     "react": "^18.3.0",
     "react-dom": "^18.3.0",
     "tailwindcss": "^3.4.0",
-    "virtualized-ui": "^0.3.1"
+    "virtualized-ui": "^0.4.0"
   }
 }

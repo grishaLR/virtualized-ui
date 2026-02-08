@@ -86,6 +86,44 @@ describe('VirtualTable component', () => {
     expect(nameHeader?.getAttribute('aria-sort')).toBe('descending');
   });
 
+  it('multi-sort with shift+click', () => {
+    function MultiSortTable() {
+      const [sorting, setSorting] = useState<SortingState>([]);
+      return (
+        <div>
+          <div data-testid="sort-state">{JSON.stringify(sorting)}</div>
+          <VirtualTable
+            data={testData}
+            columns={testColumns}
+            height={400}
+            enableSorting
+            enableMultiSort
+            sorting={sorting}
+            onSortingChange={setSorting}
+          />
+        </div>
+      );
+    }
+
+    render(<MultiSortTable />);
+
+    const nameHeader = screen.getByText('Name').closest('[role="columnheader"]');
+    const ageHeader = screen.getByText('Age').closest('[role="columnheader"]');
+
+    // Click Name to sort
+    fireEvent.click(nameHeader!);
+    expect(nameHeader?.getAttribute('aria-sort')).toBe('ascending');
+
+    // Click Age to add secondary sort (no shift needed with enableMultiSort)
+    fireEvent.click(ageHeader!);
+
+    // Both should now show sort direction
+    const sortState = JSON.parse(screen.getByTestId('sort-state').textContent!);
+    expect(sortState).toHaveLength(2);
+    expect(sortState[0].id).toBe('name');
+    expect(sortState[1].id).toBe('age');
+  });
+
   it('renders header row with role="row"', () => {
     const { container } = render(
       <VirtualTable data={testData} columns={testColumns} height={400} />

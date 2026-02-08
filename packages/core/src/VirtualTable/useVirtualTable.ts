@@ -1,4 +1,4 @@
-import { useRef, useCallback, useState, useMemo } from 'react';
+import { useRef, useCallback, useState, useMemo, useEffect } from 'react';
 import {
   useReactTable,
   getCoreRowModel,
@@ -166,6 +166,7 @@ export function useVirtualTable<TData>(options: UseVirtualTableOptions<TData>) {
     enableRowSelection,
     enableSorting,
     enableMultiSort,
+    isMultiSortEvent: enableMultiSort ? () => true : undefined,
     maxMultiSortColCount,
     enableColumnResizing,
     columnResizeMode,
@@ -209,6 +210,14 @@ export function useVirtualTable<TData>(options: UseVirtualTableOptions<TData>) {
   const virtualItems = virtualizer.getVirtualItems();
   const totalSize = virtualizer.getTotalSize();
 
+  // Track whether we've already fired for the current "near bottom" region
+  const firedScrollToBottomRef = useRef(false);
+
+  // Reset the fired flag when data changes (e.g. new items loaded)
+  useEffect(() => {
+    firedScrollToBottomRef.current = false;
+  }, [data.length]);
+
   // Handle scroll to bottom detection
   const handleScroll = useCallback(() => {
     if (!onScrollToBottom || !containerRef.current) return;
@@ -217,7 +226,12 @@ export function useVirtualTable<TData>(options: UseVirtualTableOptions<TData>) {
     const distanceFromBottom = scrollHeight - scrollTop - clientHeight;
 
     if (distanceFromBottom < scrollBottomThreshold) {
-      onScrollToBottom();
+      if (!firedScrollToBottomRef.current) {
+        firedScrollToBottomRef.current = true;
+        onScrollToBottom();
+      }
+    } else {
+      firedScrollToBottomRef.current = false;
     }
   }, [onScrollToBottom, scrollBottomThreshold]);
 

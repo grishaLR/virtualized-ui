@@ -141,7 +141,7 @@ export function TableSortingDemo({
       </div>
       <p style={{ fontSize: 12, color: '#57606a', marginTop: 8 }}>
         {rowCount.toLocaleString()} rows
-        {enableMultiSort && ' · Hold Shift to multi-sort'}
+        {enableMultiSort && ' · Click columns to multi-sort'}
       </p>
     </div>
   );

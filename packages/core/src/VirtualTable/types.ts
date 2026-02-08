@@ -45,7 +45,7 @@ export interface VirtualTableProps<TData> {
   /** Callback when sorting changes */
   onSortingChange?: (sorting: SortingState) => void;
 
-  /** Enable multi-column sorting (hold Shift to add sort) */
+  /** Enable multi-column sorting (each click adds a sort level) */
   enableMultiSort?: boolean;
 
   /** Maximum number of columns that can be sorted at once */
@@ -110,6 +110,9 @@ export interface VirtualTableProps<TData> {
 
   /** Callback when focused row index changes */
   onFocusedRowIndexChange?: (index: number) => void;
+
+  /** Accessible label for the grid container */
+  ariaLabel?: string;
 
   /** Class name for the container */
   className?: string;

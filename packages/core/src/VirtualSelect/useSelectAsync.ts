@@ -7,6 +7,7 @@ const MAX_CACHE_SIZE = 50;
 export interface UseSelectAsyncReturn<TOption> {
   asyncOptions: OptionsOrGroups<TOption>;
   isLoading: boolean;
+  loadError: Error | null;
   loadAsync: (input: string) => void;
   debouncedLoadAsync: (input: string) => void;
 }
@@ -16,6 +17,7 @@ export function useSelectAsync<TOption>(
 ): UseSelectAsyncReturn<TOption> {
   const [asyncOptions, setAsyncOptions] = useState<OptionsOrGroups<TOption>>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [loadError, setLoadError] = useState<Error | null>(null);
   const loadIdRef = useRef(0);
   const cacheRef = useRef<Map<string, { data: OptionsOrGroups<TOption>; expiresAt: number }>>(
     new Map()
@@ -42,6 +44,7 @@ export function useSelectAsync<TOption>(
       }
 
       setIsLoading(true);
+      setLoadError(null);
       const currentLoadId = ++loadIdRef.current;
 
       asyncConfig.loadOptions(input).then(
@@ -65,9 +68,10 @@ export function useSelectAsync<TOption>(
             }
           }
         },
-        () => {
+        (err) => {
           if (currentLoadId !== loadIdRef.current) return;
           setIsLoading(false);
+          setLoadError(err instanceof Error ? err : new Error(String(err)));
         }
       );
     },
@@ -83,5 +87,5 @@ export function useSelectAsync<TOption>(
     [asyncConfig?.debounceMs, loadAsync]
   );
 
-  return { asyncOptions, isLoading, loadAsync, debouncedLoadAsync };
+  return { asyncOptions, isLoading, loadError, loadAsync, debouncedLoadAsync };
 }

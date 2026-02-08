@@ -226,7 +226,7 @@ export function TableDemo({
 
       <div className="text-xs text-base-content/50">
         {rowCount.toLocaleString()} rows
-        {enableMultiSort && enableSorting && ' • Hold Shift to multi-sort'}
+        {enableMultiSort && enableSorting && ' • Click columns to multi-sort'}
         {enableKeyboardNavigation && ' • Use arrow keys to navigate, Space to select'}
       </div>
     </div>

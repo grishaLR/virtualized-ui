@@ -52,8 +52,9 @@ function DefaultTrigger(props: TriggerSlotProps) {
       onClick={onClick}
       data-open={isOpen || undefined}
       data-placeholder={isPlaceholder || undefined}
+      {...ariaProps}
     >
-      <span {...ariaProps}>{displayText}</span>
+      <span>{displayText}</span>
     </button>
   );
 }
@@ -212,12 +213,13 @@ export function VirtualSelect<TOption>(props: VirtualSelectProps<TOption>) {
             transform: `translateY(${vi.start}px)`,
           }}
         >
-          <GroupHeader label={item.groupLabel!} />
+          <GroupHeader label={item.groupLabel ?? ''} />
         </div>
       );
     }
 
-    const option = item.option!;
+    if (!item.option) return null;
+    const option = item.option;
     const value = hookOptions.getOptionValue(option);
     const label = hookOptions.getOptionLabel(option);
     const isSelected = select.selectedValues.includes(value);
